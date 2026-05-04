@@ -3,45 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Color-Range Tracker</title>
+    <title>Unified Dealer Signature Pro</title>
     <style>
-        :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; }
+        :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+        .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
         
-        .table-section { background: #064e3b; padding: 20px; border-radius: 15px; border: 4px solid #065f46; overflow-x: auto; }
-        .roulette-board { display: flex; align-items: stretch; min-width: 800px; }
-        .zero-container { width: 70px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; border-radius: 10px 0 0 10px; margin-right: 5px; }
-        .numbers-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3px; flex-grow: 1; }
-        .cell { height: 60px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.1s; border-radius: 4px; }
+        /* Table Layout */
+        .table-section { background: #064e3b; padding: 20px; border-radius: 15px; border: 4px solid #065f46; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .roulette-board { display: flex; align-items: stretch; }
+        .zero-container { width: 60px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 8px 0 0 8px; }
+        .numbers-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(3, 1fr); gap: 2px; flex-grow: 1; margin-left: 4px; }
+        .cell { height: 50px; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 2px; }
         .r { background: var(--red); } .b { background: var(--black); }
-        
-        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .pred-box { background: #0f172a; border: 1px solid #334155; padding: 15px; border-radius: 10px; text-align: center; }
-        .pred-box.active { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
-        .target-val { font-size: 2rem; font-weight: 800; color: #fbbf24; display: block; }
-        .pred-label { font-size: 0.65rem; text-transform: uppercase; opacity: 0.6; }
 
-        .log-wrap { height: 300px; overflow-y: auto; margin-top: 15px; border-radius: 8px; background: #0b0f19; border: 1px solid #2d3748; }
+        /* Unified Prediction Hero */
+        .prediction-hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 30px; text-align: center; position: relative; overflow: hidden; }
+        .prediction-hero::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%); pointer-events: none; }
+        #target-display { font-size: 5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(251, 191, 36, 0.4); margin: 10px 0; line-height: 1; }
+        .hero-label { font-size: 0.8rem; letter-spacing: 3px; color: var(--accent); font-weight: bold; }
+        
+        /* Data & Stats */
+        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-card { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border-left: 3px solid var(--accent); }
+        .stat-val { display: block; font-size: 1.1rem; font-weight: bold; color: var(--text); }
+        .stat-label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; }
+
+        .log-wrap { height: 250px; overflow-y: auto; margin-top: 15px; border: 1px solid #2d3748; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: #1e293b; padding: 10px; position: sticky; top: 0; }
+        th { background: #1e293b; padding: 10px; text-align: center; color: var(--accent); }
         td { padding: 8px; text-align: center; border-bottom: 1px solid #2d3748; }
 
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-primary { background: var(--accent); color: #0b0f19; }
-        .btn-danger { background: #7f1d1d; color: white; margin-top: 20px; }
-        .bulk-area { width: 100%; height: 60px; background: #0b0f19; color: var(--accent); border: 1px solid #475569; border-radius: 6px; padding: 10px; box-sizing: border-box; }
-        
-        .stat-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #2d3748; font-size: 0.85rem; }
+        .bulk-area { width: 100%; height: 80px; background: #0b0f19; color: var(--accent); border: 1px solid #475569; border-radius: 8px; padding: 10px; font-family: monospace; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background: var(--accent); color: #0b0f19; margin-top: 10px; }
+        .btn-danger { background: transparent; color: #ef4444; border: 1px solid #ef4444; margin-top: 20px; }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
     <div>
-        <div class="table-section">
-            <h2 style="margin:0 0 15px 0; font-size: 1rem;">INPUT RESULT</h2>
+        <div class="prediction-hero">
+            <div class="hero-label">OPTIMIZED PREDICTION</div>
+            <div id="target-display">--</div>
+            <div id="prediction-info" style="font-size: 0.9rem; opacity: 0.8;">Enter 3+ results to start</div>
+        </div>
+
+        <div class="table-section" style="margin-top: 20px;">
             <div class="roulette-board">
                 <div class="zero-container" onclick="track(0)">0</div>
                 <div id="boardGrid" class="numbers-grid"></div>
@@ -49,11 +60,11 @@
         </div>
 
         <div class="panel" style="margin-top: 20px;">
-            <h2 style="margin:0; font-size: 1rem;">SESSION DATA LOG</h2>
+            <h2 style="margin:0; font-size: 1rem;">LIVE STREAM ANALYTICS</h2>
             <div class="log-wrap">
                 <table>
                     <thead>
-                        <tr><th>Spin</th><th>Result</th><th>Type</th><th>Dist</th></tr>
+                        <tr><th>Spin</th><th>Result</th><th>Category</th><th>Dist</th><th>Trend</th></tr>
                     </thead>
                     <tbody id="logTable"></tbody>
                 </table>
@@ -62,27 +73,27 @@
     </div>
 
     <div>
-        <div class="prediction-grid">
-            <div id="box-RL" class="pred-box"><span class="pred-label">RED LOW</span><span id="pred-RL" class="target-val">--</span></div>
-            <div id="box-BL" class="pred-box"><span class="pred-label">BLACK LOW</span><span id="pred-BL" class="target-val">--</span></div>
-            <div id="box-RH" class="pred-box"><span class="pred-label">RED HIGH</span><span id="pred-RH" class="target-val">--</span></div>
-            <div id="box-BH" class="pred-box"><span class="pred-label">BLACK HIGH</span><span id="pred-BH" class="target-val">--</span></div>
-        </div>
-
         <div class="panel">
-            <h2 style="margin:0 0 10px 0; font-size: 1rem;">CATEGORY AVERAGES</h2>
-            <div id="stats-container">
-                <div class="stat-line"><span>Red Low Avg:</span><span id="avg-RL">0.0</span></div>
-                <div class="stat-line"><span>Black Low Avg:</span><span id="avg-BL">0.0</span></div>
-                <div class="stat-line"><span>Red High Avg:</span><span id="avg-RH">0.0</span></div>
-                <div class="stat-line"><span>Black High Avg:</span><span id="avg-BH">0.0</span></div>
-            </div>
+            <h2 style="margin:0; font-size: 1rem;">SMART SIGNATURE ENGINE</h2>
             
-            <div style="margin-top:20px;">
-                <textarea id="bulkData" class="bulk-area" placeholder="Paste data (23, 4, 25, 14, 12, 33...)"></textarea>
-                <button class="btn btn-primary" onclick="importHistory()">PROCESS HISTORY</button>
+            <div class="stat-grid">
+                <div class="stat-card"><span class="stat-label">Category Match</span><span id="stat-cat" class="stat-val">-</span></div>
+                <div class="stat-card"><span class="stat-label">Weighted Avg</span><span id="stat-avg" class="stat-val">0.0</span></div>
             </div>
-            <button class="btn btn-danger" onclick="resetSession()">CLEAR ALL DATA</button>
+
+            <div style="margin-top: 25px;">
+                <label class="stat-label">Bulk History Import</label>
+                <textarea id="bulkData" class="bulk-area" placeholder="23, 4, 25, 14, 12, 33..."></textarea>
+                <button class="btn btn-primary" onclick="importHistory()">CALCULATE SIGNATURE</button>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #2d3748;">
+                <div class="stat-line" style="display:flex; justify-content: space-between;">
+                    <span class="stat-label">Total Sample:</span>
+                    <span id="total-count" style="font-weight:bold;">0</span>
+                </div>
+                <button class="btn btn-danger" onclick="resetSession()">RESET ENGINE</button>
+            </div>
         </div>
     </div>
 </div>
@@ -95,9 +106,7 @@
 
     function getCategory(n) {
         if (n === 0) return "ZERO";
-        const color = reds.includes(n) ? "R" : "B";
-        const range = (n <= 18) ? "L" : "H";
-        return color + range; // e.g., RL, BH, BL, RH
+        return (reds.includes(n) ? "RED " : "BLK ") + (n <= 18 ? "LOW" : "HIGH");
     }
 
     function buildBoard() {
@@ -106,7 +115,7 @@
         rows.forEach(rowArr => {
             rowArr.forEach(n => {
                 const cell = document.createElement('div');
-                cell.className = `cell ${reds.includes(n) ? 'r' : 'b'}`;
+                cell.className = `cell ${n===0?'g':(reds.includes(n)?'r':'b')}`;
                 cell.innerText = n;
                 cell.onclick = () => track(n);
                 grid.appendChild(cell);
@@ -121,45 +130,58 @@
             dist = (wheelOrder.indexOf(num) - wheelOrder.indexOf(lastNum) + 37) % 37;
         }
         history.push({ num, type: getCategory(num), dist });
-        process();
+        calculateUnifiedPrediction();
     }
 
-    function process() {
-        const categories = ["RL", "BL", "RH", "BH"];
+    function calculateUnifiedPrediction() {
+        if (history.length < 2) {
+            updateUI("--", 0, "-");
+            return;
+        }
+
         const latest = history[history.length - 1];
+        const currentType = latest.type;
+        
+        // Filter distances for the SAME category (Color + Range)
+        const categoryDists = history.filter(h => h.type === currentType && h.dist !== null).map(h => h.dist);
+        // All recent distances for global dealer speed
+        const globalDists = history.filter(h => h.dist !== null).map(h => h.dist);
+
+        let finalAvg = 0;
+        
+        if (categoryDists.length >= 2) {
+            // WEIGHTED LOGIC: 70% Specific Category Average, 30% Global Average
+            const catAvg = categoryDists.reduce((a,b) => a+b, 0) / categoryDists.length;
+            const globAvg = globalDists.reduce((a,b) => a+b, 0) / globalDists.length;
+            finalAvg = (catAvg * 0.7) + (globAvg * 0.3);
+        } else {
+            // Fallback to global average if category data is thin
+            finalAvg = globalDists.reduce((a,b) => a+b, 0) / globalDists.length;
+        }
+
         const lastIdx = wheelOrder.indexOf(latest.num);
-
-        // Highlight the current active category box
-        categories.forEach(cat => document.getElementById(`box-${cat}`).classList.remove('active'));
-        if (latest.type !== "ZERO") document.getElementById(`box-${latest.type}`).classList.add('active');
-
-        categories.forEach(cat => {
-            // Get all distances that happened WHEN this category appeared
-            const catDists = history.filter(h => h.type === cat && h.dist !== null).map(h => h.dist);
-            const avg = catDists.length ? (catDists.reduce((a,b) => a+b, 0) / catDists.length) : 0;
-            
-            document.getElementById(`avg-${cat}`).innerText = avg.toFixed(1);
-            
-            if (catDists.length > 0) {
-                const predIdx = (lastIdx + Math.round(avg)) % 37;
-                document.getElementById(`pred-${cat}`).innerText = wheelOrder[predIdx];
-            } else {
-                document.getElementById(`pred-${cat}`).innerText = "--";
-            }
-        });
-
-        updateUI();
+        const predIdx = (lastIdx + Math.round(finalAvg)) % 37;
+        
+        updateUI(wheelOrder[predIdx], finalAvg, currentType);
     }
 
-    function updateUI() {
+    function updateUI(pred, avg, type) {
+        document.getElementById('target-display').innerText = pred;
+        document.getElementById('stat-avg').innerText = avg.toFixed(2);
+        document.getElementById('stat-cat').innerText = type;
+        document.getElementById('total-count').innerText = history.length;
+        document.getElementById('prediction-info').innerText = `Based on ${type} signature + dealer speed`;
+
         const tbody = document.getElementById('logTable');
         tbody.innerHTML = '';
         [...history].reverse().forEach((entry, i) => {
+            const trend = entry.dist > 18 ? "LONG" : (entry.dist !== null ? "SHORT" : "-");
             tbody.innerHTML += `<tr>
                 <td>${history.length - i}</td>
                 <td style="color:${reds.includes(entry.num)?'#ef4444':'#94a3b8'}"><b>${entry.num}</b></td>
                 <td>${entry.type}</td>
                 <td>${entry.dist !== null ? entry.dist : '-'}</td>
+                <td>${trend}</td>
             </tr>`;
         });
     }
@@ -173,7 +195,7 @@
 
     function resetSession() {
         history = [];
-        process();
+        updateUI("--", 0, "-");
         document.getElementById('logTable').innerHTML = '';
     }
 
