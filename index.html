@@ -3,78 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distance Strategy Tracker</title>
+    <title>Pro Distance & Neighbor Tracker</title>
     <style>
-        :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --text: #f1f5f9; --gold: #fbbf24; }
+        :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
         
+        /* Stats Display */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #2d3748; }
+        .stat-val { display: block; font-size: 2rem; font-weight: 800; line-height: 1.2; }
+        .label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Prediction Hero */
+        .hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        #target-main { font-size: 4.5rem; font-weight: 900; color: var(--gold); line-height: 1; margin: 5px 0; }
+        #neighbors { font-size: 1.3rem; color: var(--accent); font-weight: 600; }
+
+        /* STANDARD ROULETTE TABLE LAYOUT */
+        .table-container { background: #064e3b; padding: 20px; border-radius: 15px; border: 5px solid #065f46; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .zero-box { width: 60px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 8px 0 0 8px; margin-right: 4px; }
+        .rows-container { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+        .r-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+        .n-cell { height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: 0.1s; font-size: 1.1rem; }
+        .n-cell:hover { transform: scale(1.05); z-index: 2; border-color: white; }
+        .red { background: var(--red); color: white; }
+        .blk { background: var(--black); color: white; }
+
+        /* Log Section */
         .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        
-        /* Stats Header */
-        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-item { background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 3px solid #334155; }
-        .stat-item.win { border-color: var(--green); }
-        .stat-item.loss { border-color: var(--red); }
-        .stat-val { display: block; font-size: 1.8rem; font-weight: 800; }
-        .stat-label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Prediction Display */
-        .prediction-hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; }
-        #target-main { font-size: 4rem; font-weight: 900; color: var(--gold); line-height: 1; }
-        #neighbors { font-size: 1.2rem; opacity: 0.8; margin-top: 5px; color: var(--accent); }
-
-        /* Input Table */
-        .table-section { background: #064e3b; padding: 15px; border-radius: 12px; border: 3px solid #065f46; margin-bottom: 20px; }
-        .numbers-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
-        .cell { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
-        .r { background: var(--red); } .b { background: #1e293b; } .g { background: var(--green); }
-
-        .log-wrap { height: 300px; overflow-y: auto; background: #0b0f19; border-radius: 8px; font-size: 0.85rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #1e293b; padding: 10px; position: sticky; top: 0; }
+        .log-area { height: 380px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: #1e293b; padding: 12px; position: sticky; top: 0; color: var(--accent); }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #2d3748; }
-        .win-text { color: var(--green); font-weight: bold; }
-        .loss-text { color: var(--red); }
-
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-primary { background: var(--accent); color: #0b0f19; }
+        .win { color: var(--green); font-weight: bold; }
+        .loss { color: var(--red); opacity: 0.8; }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
     <div>
-        <div class="stats-bar">
-            <div class="stat-item"><span id="stat-spins" class="stat-val">0</span><span class="stat-label">Spins</span></div>
-            <div class="stat-item win"><span id="stat-wins" class="stat-val" style="color:var(--green)">0</span><span class="stat-label">Wins</span></div>
-            <div class="stat-item loss"><span id="stat-losses" class="stat-val" style="color:var(--red)">0</span><span class="stat-label">Losses</span></div>
+        <div class="stats-row">
+            <div class="stat-card"><span class="label">Spins</span><span id="s-cnt" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
+            <div class="stat-card"><span class="label">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
         </div>
 
-        <div class="prediction-hero">
-            <div class="stat-label" style="color:var(--accent)">Predicted Pocket & Neighbors</div>
+        <div class="hero">
+            <div class="label">Target & 1-Neighbor Cover</div>
             <div id="target-main">--</div>
             <div id="neighbors">-- [ -- ] --</div>
         </div>
 
-        <div class="table-section">
-            <div class="numbers-grid" id="boardGrid"></div>
+        <div class="table-container">
+            <div class="zero-box" onclick="track(0)">0</div>
+            <div class="rows-container" id="gridBody"></div>
         </div>
     </div>
 
-    <div>
-        <div class="panel">
-            <h2 style="margin:0 0 15px 0; font-size: 1rem;">SESSION LOG</h2>
-            <div class="log-wrap">
-                <table>
-                    <thead>
-                        <tr><th>#</th><th>Result</th><th>Target</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id="logTable"></tbody>
-                </table>
-            </div>
-            <button class="btn btn-primary" style="background:#334155; color:white;" onclick="resetSession()">RESET ALL</button>
+    <div class="panel">
+        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">SESSION HISTORY</h2>
+        <div class="log-area">
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Result</th><th>Target</th><th>Status</th></tr>
+                </thead>
+                <tbody id="logTable"></tbody>
+            </table>
         </div>
+        <button class="btn" style="background:#334155; color:white;" onclick="resetAll()">RESET SESSION</button>
     </div>
 </div>
 
@@ -82,35 +82,41 @@
     const wheel = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     
-    let history = []; 
-    let wins = 0;
-    let losses = 0;
-    let currentPrediction = null;
-    let currentNeighbors = [];
+    let history = [];
+    let wins = 0, losses = 0;
+    let nextPred = null, nextNeighbors = [];
 
-    function getNeighbors(num) {
-        const idx = wheel.indexOf(num);
-        const prev = wheel[(idx - 1 + 37) % 37];
-        const next = wheel[(idx + 1) % 37];
-        return [prev, num, next];
-    }
+    function buildTable() {
+        const container = document.getElementById('gridBody');
+        // Standard 3-row layout: 
+        // Row 1: 3, 6, 9...
+        // Row 2: 2, 5, 8...
+        // Row 3: 1, 4, 7...
+        const layout = [
+            [3,6,9,12,15,18,21,24,27,30,33,36],
+            [2,5,8,11,14,17,20,23,26,29,32,35],
+            [1,4,7,10,13,16,19,22,25,28,31,34]
+        ];
 
-    function buildBoard() {
-        const grid = document.getElementById('boardGrid');
-        [0, ...Array.from({length: 36}, (_, i) => i + 1)].forEach(n => {
-            const cell = document.createElement('div');
-            cell.className = `cell ${n===0?'g':(reds.includes(n)?'r':'b')}`;
-            cell.innerText = n;
-            cell.onclick = () => track(n);
-            grid.appendChild(cell);
+        layout.forEach(rowNums => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'r-row';
+            rowNums.forEach(n => {
+                const cell = document.createElement('div');
+                cell.className = `n-cell ${reds.includes(n) ? 'red' : 'blk'}`;
+                cell.innerText = n;
+                cell.onclick = () => track(n);
+                rowDiv.appendChild(cell);
+            });
+            container.appendChild(rowDiv);
         });
     }
 
-    function track(num) {
-        // 1. Check Win/Loss against previous prediction
+    function track(n) {
         let status = "-";
-        if (currentPrediction !== null) {
-            if (currentNeighbors.includes(num)) {
+        // Check win/loss from previous prediction
+        if (nextPred !== null) {
+            if (nextNeighbors.includes(n)) {
                 wins++;
                 status = "WIN";
             } else {
@@ -119,76 +125,72 @@
             }
         }
 
-        // 2. Calculate Distance
         let dist = null;
         if (history.length > 0) {
-            const lastNum = history[history.length - 1].num;
-            dist = (wheel.indexOf(num) - wheel.indexOf(lastNum) + 37) % 37;
+            const last = history[history.length - 1].num;
+            dist = (wheel.indexOf(n) - wheel.indexOf(last) + 37) % 37;
         }
 
-        const type = n => n === 0 ? "ZERO" : (reds.includes(n) ? "R" : "B") + (n <= 18 ? "L" : "H");
-        const entry = { num, dist, type: type(num), target: currentPrediction, status };
-        history.push(entry);
+        const category = n === 0 ? "ZERO" : (reds.includes(n) ? "R" : "B") + (n <= 18 ? "L" : "H");
+        history.push({ num: n, dist, type: category, pred: nextPred, status });
 
-        // 3. Generate Next Prediction
-        calculateNext();
+        calculateNext(n, category);
         updateUI();
     }
 
-    function calculateNext() {
-        const latest = history[history.length - 1];
-        const sameTypeHistory = history.filter(h => h.type === latest.type && h.dist !== null);
+    function calculateNext(lastNum, lastCat) {
+        // Find historical distances for this specific category (e.g., Red Low)
+        const relevant = history.filter(h => h.type === lastCat && h.dist !== null);
         
-        if (sameTypeHistory.length > 0) {
-            const avgDist = sameTypeHistory.reduce((a, b) => a + b.dist, 0) / sameTypeHistory.length;
-            const lastIdx = wheel.indexOf(latest.num);
-            const predIdx = (lastIdx + Math.round(avgDist)) % 37;
-            
-            currentPrediction = wheel[predIdx];
-            currentNeighbors = getNeighbors(currentPrediction);
+        let avg;
+        if (relevant.length >= 1) {
+            avg = relevant.reduce((a, b) => a + b.dist, 0) / relevant.length;
         } else {
-            // Fallback to global average if first time seeing this category
-            const globalDists = history.filter(h => h.dist !== null);
-            if(globalDists.length > 0) {
-                const avg = globalDists.reduce((a, b) => a + b.dist, 0) / globalDists.length;
-                currentPrediction = wheel[(wheel.indexOf(latest.num) + Math.round(avg)) % 37];
-                currentNeighbors = getNeighbors(currentPrediction);
-            }
+            // Fallback to global average if category is new
+            const allDists = history.filter(h => h.dist !== null);
+            avg = allDists.length > 0 ? allDists.reduce((a, b) => a + b.dist, 0) / allDists.length : 0;
         }
+
+        const startIdx = wheel.indexOf(lastNum);
+        const targetIdx = (startIdx + Math.round(avg)) % 37;
+        
+        nextPred = wheel[targetIdx];
+        const nIdx = wheel.indexOf(nextPred);
+        nextNeighbors = [
+            wheel[(nIdx - 1 + 37) % 37],
+            nextPred,
+            wheel[(nIdx + 1) % 37]
+        ];
     }
 
     function updateUI() {
-        document.getElementById('stat-spins').innerText = history.length;
-        document.getElementById('stat-wins').innerText = wins;
-        document.getElementById('stat-losses').innerText = losses;
-
-        if (currentPrediction !== null) {
-            document.getElementById('target-main').innerText = currentPrediction;
-            document.getElementById('neighbors').innerText = `${currentNeighbors[0]} - [${currentNeighbors[1]}] - ${currentNeighbors[2]}`;
-        }
+        document.getElementById('s-cnt').innerText = history.length;
+        document.getElementById('s-win').innerText = wins;
+        document.getElementById('s-loss').innerText = losses;
+        document.getElementById('target-main').innerText = nextPred;
+        document.getElementById('neighbors').innerText = `${nextNeighbors[0]} - [${nextNeighbors[1]}] - ${nextNeighbors[2]}`;
 
         const tbody = document.getElementById('logTable');
         tbody.innerHTML = '';
         [...history].reverse().forEach(h => {
-            const statusClass = h.status === "WIN" ? "win-text" : "loss-text";
             tbody.innerHTML += `<tr>
                 <td>${history.indexOf(h) + 1}</td>
-                <td style="font-weight:bold">${h.num}</td>
-                <td>${h.target !== null ? h.target : '--'}</td>
-                <td class="${statusClass}">${h.status}</td>
+                <td style="font-weight:bold; color:${reds.includes(h.num)?'var(--red)':'#fff'}">${h.num}</td>
+                <td>${h.pred !== null ? h.pred : '--'}</td>
+                <td class="${h.status === 'WIN' ? 'win' : 'loss'}">${h.status}</td>
             </tr>`;
         });
     }
 
-    function resetSession() {
+    function resetAll() {
         history = []; wins = 0; losses = 0;
-        currentPrediction = null; currentNeighbors = [];
+        nextPred = null; nextNeighbors = [];
         document.getElementById('target-main').innerText = "--";
         document.getElementById('neighbors').innerText = "-- [ -- ] --";
         updateUI();
     }
 
-    buildBoard();
+    buildTable();
 </script>
 </body>
 </html>
