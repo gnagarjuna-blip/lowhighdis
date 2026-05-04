@@ -3,43 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Split-Range Dealer Signature Tracker</title>
+    <title>Advanced Color-Range Tracker</title>
     <style>
         :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; }
         body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        .dashboard { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
         
-        .table-section { background: #064e3b; padding: 20px; border-radius: 15px; border: 4px solid #065f46; position: relative; overflow-x: auto; }
+        .table-section { background: #064e3b; padding: 20px; border-radius: 15px; border: 4px solid #065f46; overflow-x: auto; }
         .roulette-board { display: flex; align-items: stretch; min-width: 800px; }
-        
-        .zero-container { width: 70px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; border-top-left-radius: 40px; border-bottom-left-radius: 40px; margin-right: 5px; }
-        
+        .zero-container { width: 70px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: pointer; border-radius: 10px 0 0 10px; margin-right: 5px; }
         .numbers-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3px; flex-grow: 1; }
-        .cell { height: 60px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.1s; border-radius: 2px; }
-        .cell:hover { filter: brightness(1.3); border-color: white; }
-        .cell:active { transform: scale(0.95); }
-        .r { background: var(--red); }
-        .b { background: var(--black); }
-
-        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        .prediction-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .prediction-hero { text-align: center; background: #0f172a; border: 2px solid var(--accent); padding: 15px; border-radius: 12px; }
-        .pred-label { font-size: 0.7rem; letter-spacing: 1px; opacity: 0.6; margin-bottom: 5px; }
-        .target-val { font-size: 2.5rem; font-weight: 800; color: #fbbf24; }
+        .cell { height: 60px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.1s; border-radius: 4px; }
+        .r { background: var(--red); } .b { background: var(--black); }
         
-        .log-wrap { height: 350px; overflow-y: auto; margin-top: 15px; border-radius: 8px; background: #0b0f19; }
+        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
+        .prediction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .pred-box { background: #0f172a; border: 1px solid #334155; padding: 15px; border-radius: 10px; text-align: center; }
+        .pred-box.active { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .target-val { font-size: 2rem; font-weight: 800; color: #fbbf24; display: block; }
+        .pred-label { font-size: 0.65rem; text-transform: uppercase; opacity: 0.6; }
+
+        .log-wrap { height: 300px; overflow-y: auto; margin-top: 15px; border-radius: 8px; background: #0b0f19; border: 1px solid #2d3748; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: #1e293b; padding: 12px; position: sticky; top: 0; text-align: center; }
+        th { background: #1e293b; padding: 10px; position: sticky; top: 0; }
         td { padding: 8px; text-align: center; border-bottom: 1px solid #2d3748; }
 
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-primary { background: var(--accent); color: #0b0f19; }
-        .btn-danger { background: #7f1d1d; color: white; }
+        .btn-danger { background: #7f1d1d; color: white; margin-top: 20px; }
+        .bulk-area { width: 100%; height: 60px; background: #0b0f19; color: var(--accent); border: 1px solid #475569; border-radius: 6px; padding: 10px; box-sizing: border-box; }
         
-        .bulk-area { width: 100%; height: 60px; background: #0b0f19; color: var(--accent); border: 1px solid #475569; border-radius: 6px; padding: 10px; box-sizing: border-box; margin-top: 10px; }
-        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
-        .low-color { color: #f472b6; } /* Pink for Low */
-        .high-color { color: #60a5fa; } /* Blue for High */
+        .stat-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #2d3748; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -47,19 +41,19 @@
 <div class="dashboard">
     <div>
         <div class="table-section">
-            <h2 style="margin:0 0 15px 0; font-size: 1rem; opacity: 0.8;">LIVE ROULETTE INPUT</h2>
+            <h2 style="margin:0 0 15px 0; font-size: 1rem;">INPUT RESULT</h2>
             <div class="roulette-board">
                 <div class="zero-container" onclick="track(0)">0</div>
-                <div class="numbers-grid" id="boardGrid"></div>
+                <div id="boardGrid" class="numbers-grid"></div>
             </div>
         </div>
 
         <div class="panel" style="margin-top: 20px;">
-            <h2 style="margin:0; font-size: 1rem;">SESSION LOG (SPLIT ANALYTICS)</h2>
+            <h2 style="margin:0; font-size: 1rem;">SESSION DATA LOG</h2>
             <div class="log-wrap">
                 <table>
                     <thead>
-                        <tr><th>Spin</th><th>Result</th><th>Range</th><th>Wheel Dist</th></tr>
+                        <tr><th>Spin</th><th>Result</th><th>Type</th><th>Dist</th></tr>
                     </thead>
                     <tbody id="logTable"></tbody>
                 </table>
@@ -68,37 +62,27 @@
     </div>
 
     <div>
-        <div class="prediction-container">
-            <div class="prediction-hero">
-                <div class="pred-label">LOW (1-18)</div>
-                <div id="target-low" class="target-val">--</div>
-            </div>
-            <div class="prediction-hero">
-                <div class="pred-label">HIGH (19-36)</div>
-                <div id="target-high" class="target-val">--</div>
-            </div>
+        <div class="prediction-grid">
+            <div id="box-RL" class="pred-box"><span class="pred-label">RED LOW</span><span id="pred-RL" class="target-val">--</span></div>
+            <div id="box-BL" class="pred-box"><span class="pred-label">BLACK LOW</span><span id="pred-BL" class="target-val">--</span></div>
+            <div id="box-RH" class="pred-box"><span class="pred-label">RED HIGH</span><span id="pred-RH" class="target-val">--</span></div>
+            <div id="box-BH" class="pred-box"><span class="pred-label">BLACK HIGH</span><span id="pred-BH" class="target-val">--</span></div>
         </div>
 
         <div class="panel">
-            <h2 style="margin:0; font-size: 1rem;">RANGE AVERAGES</h2>
-            <div style="margin: 15px 0;">
-                <div class="info-row">
-                    <span>Low (1-18) Avg Dist:</span>
-                    <span id="avg-low" class="low-color" style="font-weight:bold;">0.0</span>
-                </div>
-                <div class="info-row">
-                    <span>High (19-36) Avg Dist:</span>
-                    <span id="avg-high" class="high-color" style="font-weight:bold;">0.0</span>
-                </div>
-                <div class="info-row">
-                    <span style="opacity:0.7">Last Hit:</span>
-                    <span id="last-hit-display">None</span>
-                </div>
+            <h2 style="margin:0 0 10px 0; font-size: 1rem;">CATEGORY AVERAGES</h2>
+            <div id="stats-container">
+                <div class="stat-line"><span>Red Low Avg:</span><span id="avg-RL">0.0</span></div>
+                <div class="stat-line"><span>Black Low Avg:</span><span id="avg-BL">0.0</span></div>
+                <div class="stat-line"><span>Red High Avg:</span><span id="avg-RH">0.0</span></div>
+                <div class="stat-line"><span>Black High Avg:</span><span id="avg-BH">0.0</span></div>
             </div>
             
-            <textarea id="bulkData" class="bulk-area" placeholder="Paste history (e.g. 1, 19, 5, 30)"></textarea>
-            <button class="btn btn-primary" onclick="importHistory()">IMPORT DATA</button>
-            <button class="btn btn-danger" onclick="resetSession()">RESET ALL</button>
+            <div style="margin-top:20px;">
+                <textarea id="bulkData" class="bulk-area" placeholder="Paste data (23, 4, 25, 14, 12, 33...)"></textarea>
+                <button class="btn btn-primary" onclick="importHistory()">PROCESS HISTORY</button>
+            </div>
+            <button class="btn btn-danger" onclick="resetSession()">CLEAR ALL DATA</button>
         </div>
     </div>
 </div>
@@ -107,7 +91,14 @@
     const wheelOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     
-    let history = []; // Stores {num, range, dist}
+    let history = []; 
+
+    function getCategory(n) {
+        if (n === 0) return "ZERO";
+        const color = reds.includes(n) ? "R" : "B";
+        const range = (n <= 18) ? "L" : "H";
+        return color + range; // e.g., RL, BH, BL, RH
+    }
 
     function buildBoard() {
         const grid = document.getElementById('boardGrid');
@@ -124,66 +115,52 @@
     }
 
     function track(num) {
-        let range = "None";
-        if (num >= 1 && num <= 18) range = "LOW";
-        if (num >= 19 && num <= 36) range = "HIGH";
-        if (num === 0) range = "ZERO";
-
-        let distance = null;
-        
-        // Find the last number regardless of range to calculate travel distance
+        let dist = null;
         if (history.length > 0) {
             const lastNum = history[history.length - 1].num;
-            distance = (wheelOrder.indexOf(num) - wheelOrder.indexOf(lastNum) + 37) % 37;
+            dist = (wheelOrder.indexOf(num) - wheelOrder.indexOf(lastNum) + 37) % 37;
         }
-
-        history.push({ num, range, dist: distance });
+        history.push({ num, type: getCategory(num), dist });
         process();
     }
 
     function process() {
-        // Filter history by range
-        const lowDists = history.filter(h => h.range === "LOW" && h.dist !== null).map(h => h.dist);
-        const highDists = history.filter(h => h.range === "HIGH" && h.dist !== null).map(h => h.dist);
+        const categories = ["RL", "BL", "RH", "BH"];
+        const latest = history[history.length - 1];
+        const lastIdx = wheelOrder.indexOf(latest.num);
 
-        const avgLow = lowDists.length ? (lowDists.reduce((a,b) => a+b, 0) / lowDists.length) : 0;
-        const avgHigh = highDists.length ? (highDists.reduce((a,b) => a+b, 0) / highDists.length) : 0;
+        // Highlight the current active category box
+        categories.forEach(cat => document.getElementById(`box-${cat}`).classList.remove('active'));
+        if (latest.type !== "ZERO") document.getElementById(`box-${latest.type}`).classList.add('active');
 
-        const lastNum = history[history.length - 1].num;
-        const lastIdx = wheelOrder.indexOf(lastNum);
-
-        // Calculate Predictions
-        const predLowIdx = (lastIdx + Math.round(avgLow)) % 37;
-        const predHighIdx = (lastIdx + Math.round(avgHigh)) % 37;
-
-        updateUI({
-            predLow: lowDists.length > 0 ? wheelOrder[predLowIdx] : "--",
-            predHigh: highDists.length > 0 ? wheelOrder[predHighIdx] : "--",
-            avgLow,
-            avgHigh,
-            lastNum
+        categories.forEach(cat => {
+            // Get all distances that happened WHEN this category appeared
+            const catDists = history.filter(h => h.type === cat && h.dist !== null).map(h => h.dist);
+            const avg = catDists.length ? (catDists.reduce((a,b) => a+b, 0) / catDists.length) : 0;
+            
+            document.getElementById(`avg-${cat}`).innerText = avg.toFixed(1);
+            
+            if (catDists.length > 0) {
+                const predIdx = (lastIdx + Math.round(avg)) % 37;
+                document.getElementById(`pred-${cat}`).innerText = wheelOrder[predIdx];
+            } else {
+                document.getElementById(`pred-${cat}`).innerText = "--";
+            }
         });
+
+        updateUI();
     }
 
-    function updateUI(data) {
-        document.getElementById('target-low').innerText = data.predLow;
-        document.getElementById('target-high').innerText = data.predHigh;
-        document.getElementById('avg-low').innerText = data.avgLow.toFixed(2);
-        document.getElementById('avg-high').innerText = data.avgHigh.toFixed(2);
-        document.getElementById('last-hit-display').innerText = data.lastNum;
-
+    function updateUI() {
         const tbody = document.getElementById('logTable');
         tbody.innerHTML = '';
         [...history].reverse().forEach((entry, i) => {
-            const spinNo = history.length - i;
-            const rangeClass = entry.range === "LOW" ? "low-color" : (entry.range === "HIGH" ? "high-color" : "");
-            tbody.innerHTML += `
-                <tr>
-                    <td>${spinNo}</td>
-                    <td><b>${entry.num}</b></td>
-                    <td class="${rangeClass}">${entry.range}</td>
-                    <td>${entry.dist !== null ? entry.dist : '-'}</td>
-                </tr>`;
+            tbody.innerHTML += `<tr>
+                <td>${history.length - i}</td>
+                <td style="color:${reds.includes(entry.num)?'#ef4444':'#94a3b8'}"><b>${entry.num}</b></td>
+                <td>${entry.type}</td>
+                <td>${entry.dist !== null ? entry.dist : '-'}</td>
+            </tr>`;
         });
     }
 
@@ -196,12 +173,8 @@
 
     function resetSession() {
         history = [];
-        document.getElementById('target-low').innerText = "--";
-        document.getElementById('target-high').innerText = "--";
-        document.getElementById('avg-low').innerText = "0.0";
-        document.getElementById('avg-high').innerText = "0.0";
-        document.getElementById('logTable').innerHTML = "";
-        document.getElementById('last-hit-display').innerText = "None";
+        process();
+        document.getElementById('logTable').innerHTML = '';
     }
 
     buildBoard();
