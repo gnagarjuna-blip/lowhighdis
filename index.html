@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Distance & Neighbor Tracker</title>
+    <title>Pattern Distance Predictor</title>
     <style>
         :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
         
-        /* Stats Display */
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #2d3748; }
         .stat-val { display: block; font-size: 2rem; font-weight: 800; line-height: 1.2; }
         .label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Prediction Hero */
         .hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
         #target-main { font-size: 4.5rem; font-weight: 900; color: var(--gold); line-height: 1; margin: 5px 0; }
         #neighbors { font-size: 1.3rem; color: var(--accent); font-weight: 600; }
 
-        /* STANDARD ROULETTE TABLE LAYOUT */
         .table-container { background: #064e3b; padding: 20px; border-radius: 15px; border: 5px solid #065f46; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .zero-box { width: 60px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 8px 0 0 8px; margin-right: 4px; }
         .rows-container { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
@@ -30,15 +27,13 @@
         .red { background: var(--red); color: white; }
         .blk { background: var(--black); color: white; }
 
-        /* Log Section */
         .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        .log-area { height: 380px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
+        .log-area { height: 450px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th { background: #1e293b; padding: 12px; position: sticky; top: 0; color: var(--accent); }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #2d3748; }
         .win { color: var(--green); font-weight: bold; }
         .loss { color: var(--red); opacity: 0.8; }
-        
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
     </style>
 </head>
@@ -48,28 +43,28 @@
     <div>
         <div class="stats-row">
             <div class="stat-card"><span class="label">Spins</span><span id="s-cnt" class="stat-val">0</span></div>
-            <div class="stat-card"><span class="label">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
+            <div class="stat-card"><span class="label">Wins (Hits)</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
             <div class="stat-card"><span class="label">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
         </div>
 
         <div class="hero">
-            <div class="label">Target & 1-Neighbor Cover</div>
+            <div class="label" id="prediction-info">Waiting for data...</div>
             <div id="target-main">--</div>
             <div id="neighbors">-- [ -- ] --</div>
         </div>
 
         <div class="table-container">
             <div class="zero-box" onclick="track(0)">0</div>
-            <div class="rows-container" id="gridBody"></div>
+            <div id="gridBody" class="rows-container"></div>
         </div>
     </div>
 
     <div class="panel">
-        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">SESSION HISTORY</h2>
+        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">NUMBER-SPECIFIC HISTORY</h2>
         <div class="log-area">
             <table>
                 <thead>
-                    <tr><th>#</th><th>Result</th><th>Target</th><th>Status</th></tr>
+                    <tr><th>#</th><th>Entered</th><th>Prediction</th><th>Status</th></tr>
                 </thead>
                 <tbody id="logTable"></tbody>
             </table>
@@ -79,25 +74,21 @@
 </div>
 
 <script>
+    // European Wheel
     const wheel = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     
-    let history = [];
+    let history = []; // Stores {num, distFromPrev}
     let wins = 0, losses = 0;
     let nextPred = null, nextNeighbors = [];
 
     function buildTable() {
         const container = document.getElementById('gridBody');
-        // Standard 3-row layout: 
-        // Row 1: 3, 6, 9...
-        // Row 2: 2, 5, 8...
-        // Row 3: 1, 4, 7...
         const layout = [
             [3,6,9,12,15,18,21,24,27,30,33,36],
             [2,5,8,11,14,17,20,23,26,29,32,35],
             [1,4,7,10,13,16,19,22,25,28,31,34]
         ];
-
         layout.forEach(rowNums => {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'r-row';
@@ -114,7 +105,8 @@
 
     function track(n) {
         let status = "-";
-        // Check win/loss from previous prediction
+        
+        // 1. Check if previous prediction was correct
         if (nextPred !== null) {
             if (nextNeighbors.includes(n)) {
                 wins++;
@@ -125,36 +117,59 @@
             }
         }
 
+        // 2. Calculate distance from previous number on the wheel
         let dist = null;
         if (history.length > 0) {
-            const last = history[history.length - 1].num;
-            dist = (wheel.indexOf(n) - wheel.indexOf(last) + 37) % 37;
+            const lastNum = history[history.length - 1].num;
+            const idxCurr = wheel.indexOf(n);
+            const idxPrev = wheel.indexOf(lastNum);
+            dist = (idxCurr - idxPrev + 37) % 37;
         }
 
-        const category = n === 0 ? "ZERO" : (reds.includes(n) ? "R" : "B") + (n <= 18 ? "L" : "H");
-        history.push({ num: n, dist, type: category, pred: nextPred, status });
+        // 3. Save to history
+        history.push({ num: n, dist: dist, pred: nextPred, status: status });
 
-        calculateNext(n, category);
+        // 4. Calculate prediction for NEXT spin based on new input
+        calculateNext(n);
         updateUI();
     }
 
-    function calculateNext(lastNum, lastCat) {
-        // Find historical distances for this specific category (e.g., Red Low)
-        const relevant = history.filter(h => h.type === lastCat && h.dist !== null);
-        
-        let avg;
-        if (relevant.length >= 1) {
-            avg = relevant.reduce((a, b) => a + b.dist, 0) / relevant.length;
-        } else {
-            // Fallback to global average if category is new
-            const allDists = history.filter(h => h.dist !== null);
-            avg = allDists.length > 0 ? allDists.reduce((a, b) => a + b.dist, 0) / allDists.length : 0;
+    function calculateNext(currentNum) {
+        // FIND ALL INSTANCES OF THIS NUMBER IN HISTORY
+        // We look for where history[i].num == currentNum AND there was a spin AFTER it
+        let matchingDistances = [];
+
+        for (let i = 0; i < history.length - 1; i++) {
+            if (history[i].num === currentNum) {
+                // The distance of the number that came AFTER this instance
+                let followDist = history[i+1].dist;
+                if (followDist !== null) {
+                    matchingDistances.push(followDist);
+                }
+            }
         }
 
-        const startIdx = wheel.indexOf(lastNum);
-        const targetIdx = (startIdx + Math.round(avg)) % 37;
+        let avgDist;
+        const infoBox = document.getElementById('prediction-info');
+
+        if (matchingDistances.length > 0) {
+            // Logic: Average the distances that occurred after the number currentNum
+            avgDist = matchingDistances.reduce((a, b) => a + b, 0) / matchingDistances.length;
+            infoBox.innerText = `Based on ${matchingDistances.length} past case(s) for ${currentNum}`;
+        } else {
+            // Fallback: If this number hasn't appeared before, use global average or 0
+            const allDists = history.filter(h => h.dist !== null).map(h => h.dist);
+            avgDist = allDists.length > 0 ? (allDists.reduce((a, b) => a + b, 0) / allDists.length) : 0;
+            infoBox.innerText = `New number ${currentNum}: Using global average distance`;
+        }
+
+        // Apply average distance to current wheel position
+        const currentIdx = wheel.indexOf(currentNum);
+        const targetIdx = (currentIdx + Math.round(avgDist)) % 37;
         
         nextPred = wheel[targetIdx];
+        
+        // Set neighbors (Target + 1 on each side)
         const nIdx = wheel.indexOf(nextPred);
         nextNeighbors = [
             wheel[(nIdx - 1 + 37) % 37],
@@ -172,10 +187,11 @@
 
         const tbody = document.getElementById('logTable');
         tbody.innerHTML = '';
-        [...history].reverse().forEach(h => {
+        [...history].reverse().forEach((h, i) => {
+            const idx = history.length - 1 - i;
             tbody.innerHTML += `<tr>
-                <td>${history.indexOf(h) + 1}</td>
-                <td style="font-weight:bold; color:${reds.includes(h.num)?'var(--red)':'#fff'}">${h.num}</td>
+                <td>${idx + 1}</td>
+                <td style="font-weight:bold; color:${h.num===0?'#10b981':(reds.includes(h.num)?'#ef4444':'#fff')}">${h.num}</td>
                 <td>${h.pred !== null ? h.pred : '--'}</td>
                 <td class="${h.status === 'WIN' ? 'win' : 'loss'}">${h.status}</td>
             </tr>`;
@@ -187,6 +203,7 @@
         nextPred = null; nextNeighbors = [];
         document.getElementById('target-main').innerText = "--";
         document.getElementById('neighbors').innerText = "-- [ -- ] --";
+        document.getElementById('prediction-info').innerText = "Waiting for data...";
         updateUI();
     }
 
