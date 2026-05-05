@@ -8,7 +8,495 @@
         :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #111827; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .dashboard { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Master Pro - Dealer Signature Engine</title>
+    <style>
+        :root { --bg: #060913; --panel: #0f1626; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #02040a; --text: #f1f5f9; --gold: #fbbf24; --orange: #f97316; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .dashboard { max-width: 1550px; margin: 0 auto; display: grid; grid-template-columns: 1fr 420px; gap: 20px; }
         
+        .setup-panel { background: var(--panel); border: 1px solid #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .textarea-input { width: 100%; height: 70px; background: #060913; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
+        
+        .controls { display: flex; gap: 15px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #1e293b; }
+        .stat-val { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
+        .label-stat { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+
+        .hero { background: linear-gradient(145deg, #1e293b, #02040a); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: center; }
+        .hero-section { border-right: 1px solid #1e293b; padding: 0 10px; }
+        .hero-section:last-child { border-right: none; }
+        .predict-title { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
+        .predict-val { font-size: 2.2rem; font-weight: 900; color: var(--gold); margin-top: 5px; }
+        .sub-tag { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-top: 4px; }
+        
+        /* Travel Chart Canvas Layout */
+        .chart-box { background: var(--panel); border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .canvas-container { position: relative; width: 100%; height: 160px; background: #02040a; border-radius: 8px; border: 1px solid #1e293b; overflow: hidden; }
+        
+        /* Interactive Wheel Interface Layout */
+        .roulette-container { background: #064e3b; padding: 15px; border-radius: 12px; border: 4px solid #065f46; display: flex; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); user-select: none; }
+        .zero-cell { width: 55px; background: var(--green); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
+        .zero-cell:hover, .grid-cell:hover { filter: brightness(1.2); transform: scale(1.02); z-index: 2; border-color: #fff; }
+        .grid-rows { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; margin-left: 4px; }
+        .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+        .grid-cell { height: 48px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); font-size: 1.15rem; transition: all 0.1s; }
+        .r-num { background: var(--red); color: white; }
+        .b-num { background: var(--black); color: white; }
+
+        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #1e293b; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .log-area { height: 480px; overflow-y: auto; background: #060913; border-radius: 8px; border: 1px solid #1e293b; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: #111a2e; padding: 12px; position: sticky; top: 0; color: var(--accent); border-bottom: 2px solid #1e293b; }
+        td { padding: 11px; text-align: center; border-bottom: 1px solid #111a2e; }
+        
+        .btn { padding: 11px 22px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #060913; }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-success { background: var(--green); color: white; }
+        
+        .win-text { color: var(--green); font-weight: bold; }
+        .loss-text { color: var(--red); font-weight: bold; }
+        .info-tag { font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; background: #1e293b; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="setup-panel">
+        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. DEALER SIGNATURE CORE DATA ACQUISITION LOGS</h2>
+        <textarea id="bulkData" class="textarea-input" placeholder="Paste historical sequential spins to configure signature profile patterns (e.g., 22 11 4 19 12 36 1 20 ...)"></textarea>
+        <div class="controls">
+            <button class="btn" onclick="processData(false)">Seed Signature Array</button>
+            <button class="btn btn-success" onclick="processData(true)">Execute Full Engine Simulation w/ Travel Metrics</button>
+        </div>
+    </div>
+
+    <div>
+        <div class="stats-row">
+            <div class="stat-card"><span class="label-stat">Total Spins</span><span id="s-cnt" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label-stat">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
+            <div class="stat-card"><span class="label-stat">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
+            <div class="stat-card"><span class="label-stat">Max Loss Streak</span><span id="s-max-loss" class="stat-val" style="color:var(--gold)">0</span></div>
+        </div>
+
+        <div class="hero">
+            <div class="hero-section">
+                <div class="predict-title">Main Prediction</div>
+                <div id="p-main" class="predict-val">--</div>
+                <div class="sub-tag">Base Tracker Target</div>
+            </div>
+            <div class="hero-section">
+                <div class="predict-title">TOP (OVER) Target</div>
+                <div id="p-over" class="predict-val" style="color:var(--orange)">--</div>
+                <div class="sub-tag">Line Above Orange</div>
+            </div>
+            <div class="hero-section">
+                <div class="predict-title">TOP (UNDER) Target</div>
+                <div id="p-under" class="predict-val" style="color:var(--accent)">--</div>
+                <div class="sub-tag">Line Below Orange</div>
+            </div>
+        </div>
+
+        <div class="chart-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:bold;">
+                <span style="color:var(--accent)">📈 REAL-TIME BALL TRAVEL FLOW DATA CHART</span>
+                <span id="travel-insight" style="color:var(--gold)">Rhythm: Analysing Phase Velocity...</span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="travelChart"></canvas>
+            </div>
+        </div>
+
+        <h3 style="margin:0 0 10px 5px; font-size: 1rem; color:var(--text)">2. CLASSIFY SYSTEM INPUT SPINS VIA WHEEL GRID</h3>
+        <div class="roulette-container">
+            <div class="zero-cell" onclick="addSingleSpin(0)">0</div>
+            <div id="rouletteGrid" class="grid-rows"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">SIGNATURE STREAM LOG MATRIX</h2>
+        <div class="log-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Num</th>
+                        <th>Distance</th>
+                        <th>Travel Vector</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody id="logTable"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET LAYER SYSTEM</button>
+    </div>
+</div>
+
+<script>
+    // Standard European Wheel Sequence Configuration
+    const wheelTrack = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+    const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    
+    let rawNumbers = [];
+    let trackedPredictions = []; 
+    let travelDistances = [];
+    let totalWins = 0;
+    let totalLosses = 0;
+    let maxLossStreak = 0;
+    let currentLossStreak = 0;
+
+    function buildRouletteTable() {
+        const grid = document.getElementById('rouletteGrid');
+        const structure = [
+            [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
+            [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
+            [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
+        ];
+        structure.forEach(rowNumbers => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'grid-row';
+            rowNumbers.forEach(num => {
+                const cell = document.createElement('div');
+                cell.className = `grid-cell ${reds.includes(num) ? 'r-num' : 'b-num'}`;
+                cell.innerText = num;
+                cell.onclick = () => addSingleSpin(num);
+                rowDiv.appendChild(cell);
+            });
+            grid.appendChild(rowDiv);
+        });
+    }
+
+    // Mathematical Wheel Distance Solver
+    function calculateWheelDistance(fromNum, toNum) {
+        let indexA = wheelTrack.indexOf(fromNum);
+        let indexB = wheelTrack.indexOf(toNum);
+        let dist = Math.abs(indexA - indexB);
+        return dist > 18 ? 37 - dist : dist; 
+    }
+
+    // Resolves Racetrack Area Targets including Neighbours Verification
+    function verifySectorHit(predictedNum, targetNeighbours, outcomeNum) {
+        if (predictedNum === null || predictedNum === "No Bet") return false;
+        let pIdx = wheelTrack.indexOf(Number(predictedNum));
+        let oIdx = wheelTrack.indexOf(Number(outcomeNum));
+        if (pIdx === -1 || oIdx === -1) return false;
+
+        let leftBoundary = (pIdx - targetNeighbours + 37) % 37;
+        let rightBoundary = (pIdx + targetNeighbours) % 37;
+
+        if (leftBoundary <= rightBoundary) {
+            return oIdx >= leftBoundary && oIdx <= rightBoundary;
+        } else {
+            return oIdx >= leftBoundary || oIdx <= rightBoundary;
+        }
+    }
+
+    function processData(runSimulation = false) {
+        const textStr = document.getElementById('bulkData').value.trim();
+        if (!textStr) return alert("Input a historical data stream array.");
+        const parsed = textStr.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
+        if (parsed.length < 4) return alert("System requires at least 4 starting numbers to evaluate signatures.");
+
+        resetCounters();
+
+        if (!runSimulation) {
+            rawNumbers = parsed;
+            travelDistances = [0];
+            for(let i=1; i<parsed.length; i++) {
+                travelDistances.push(calculateWheelDistance(parsed[i-1], parsed[i]));
+            }
+            trackedPredictions = Array(parsed.length).fill({ main: null, over: null, under: null, activeUse: 'main', evaluation: "-" });
+            runCoreEngine();
+        } else {
+            rawNumbers = [];
+            travelDistances = [];
+            trackedPredictions = [];
+
+            for (let i = 0; i < parsed.length; i++) {
+                const currentSpin = parsed[i];
+                let dist = rawNumbers.length > 0 ? calculateWheelDistance(rawNumbers[rawNumbers.length - 1], currentSpin) : 0;
+                travelDistances.push(dist);
+
+                let evalStatus = "-";
+                if (trackedPredictions.length > 0) {
+                    let lastBlock = trackedPredictions[trackedPredictions.length - 1];
+                    let activeTargetNum = null;
+                    let activeNeighbours = 4;
+
+                    if (lastBlock.activeUse === 'main' && lastBlock.main) { activeTargetNum = lastBlock.main.split('n')[0]; activeNeighbours = 9; }
+                    else if (lastBlock.activeUse === 'over' && lastBlock.over) { activeTargetNum = lastBlock.over.split('n')[0]; }
+                    else if (lastBlock.activeUse === 'under' && lastBlock.under) { activeTargetNum = lastBlock.under.split('n')[0]; }
+
+                    if (activeTargetNum && activeTargetNum !== "No Bet") {
+                        let hit = verifySectorHit(activeTargetNum, activeNeighbours, currentSpin);
+                        if (hit) {
+                            totalWins++;
+                            if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
+                            currentLossStreak = 0;
+                            evalStatus = "WIN";
+                        } else {
+                            totalLosses++;
+                            currentLossStreak++;
+                            evalStatus = "LOSS";
+                        }
+                    }
+                }
+
+                rawNumbers.push(currentSpin);
+                let signatureOutput = computeDealerSignatureModel();
+
+                trackedPredictions.push({
+                    main: signatureOutput.main,
+                    over: signatureOutput.over,
+                    under: signatureOutput.under,
+                    activeUse: signatureOutput.activeUse,
+                    evaluation: evalStatus
+                });
+            }
+            runCoreEngine();
+        }
+    }
+
+    function addSingleSpin(num) {
+        let dist = rawNumbers.length > 0 ? calculateWheelDistance(rawNumbers[rawNumbers.length - 1], num) : 0;
+        travelDistances.push(dist);
+
+        let evalStatus = "-";
+        if (trackedPredictions.length > 0) {
+            let lastBlock = trackedPredictions[trackedPredictions.length - 1];
+            let activeTargetNum = null;
+            let activeNeighbours = 4;
+
+            if (lastBlock.activeUse === 'main' && lastBlock.main) { activeTargetNum = lastBlock.main.split('n')[0]; activeNeighbours = 9; }
+            else if (lastBlock.activeUse === 'over' && lastBlock.over) { activeTargetNum = lastBlock.over.split('n')[0]; }
+            else if (lastBlock.activeUse === 'under' && lastBlock.under) { activeTargetNum = lastBlock.under.split('n')[0]; }
+
+            if (activeTargetNum && activeTargetNum !== "No Bet") {
+                let hit = verifySectorHit(activeTargetNum, activeNeighbours, num);
+                if (hit) {
+                    totalWins++;
+                    if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
+                    currentLossStreak = 0;
+                    evalStatus = "WIN";
+                } else {
+                    totalLosses++;
+                    currentLossStreak++;
+                    evalStatus = "LOSS";
+                }
+            }
+        }
+
+        rawNumbers.push(num);
+        let signatureOutput = computeDealerSignatureModel();
+
+        trackedPredictions.push({
+            main: signatureOutput.main,
+            over: signatureOutput.over,
+            under: signatureOutput.under,
+            activeUse: signatureOutput.activeUse,
+            evaluation: evalStatus
+        });
+
+        runCoreEngine();
+    }
+
+    // Pro-Signature Processing Core Heuristics
+    function computeDealerSignatureModel() {
+        if (rawNumbers.length < 3) return { main: "--", over: "--", under: "--", activeUse: 'main' };
+
+        let totalLen = rawNumbers.length;
+        let lastNum = rawNumbers[totalLen - 1];
+        
+        // Compute base localized trend bias weights
+        let weights = Array(37).fill(0);
+        for(let i = 1; i < totalLen; i++) {
+            let spaceDist = calculateWheelDistance(rawNumbers[i-1], rawNumbers[i]);
+            let targetNum = rawNumbers[i];
+            let decayMod = i / totalLen; // Reinforce recent dealer travel actions
+            weights[targetNum] += (37 - spaceDist) * decayMod;
+        }
+
+        let mainTarget = 0, maxW = -1;
+        weights.forEach((w, idx) => { if(w > maxW) { maxW = w; mainTarget = idx; } });
+
+        // Build Multi-Heuristic Top Placements 
+        let currentTravel = travelDistances[travelDistances.length - 1] || 0;
+        const orangeLineRef = 9.2; // Fixed Heuristic Signature Separation Level
+        
+        // Calculate Top Offsets dynamically using localized wheel track coordinates
+        let baseIdx = wheelTrack.indexOf(mainTarget);
+        let overTarget = wheelTrack[(baseIdx + 3) % 37];
+        let underTarget = wheelTrack[(baseIdx - 3 + 37) % 37];
+
+        let chosenTrackSide = 'main';
+        if (currentTravel > orangeLineRef) { chosenTrackSide = 'over'; }
+        else if (currentTravel > 0 && currentTravel <= orangeLineRef) { chosenTrackSide = 'under'; }
+
+        return {
+            main: `${mainTarget}n9`,
+            over: `${overTarget}n4`,
+            under: `${underTarget}n4`,
+            activeUse: chosenTrackSide
+        };
+    }
+
+    function runCoreEngine() {
+        if (rawNumbers.length === 0) return;
+        
+        let signatureOutput = computeDealerSignatureModel();
+        document.getElementById('p-main').innerText = signatureOutput.main;
+        document.getElementById('p-over').innerText = signatureOutput.over;
+        document.getElementById('p-under').innerText = signatureOutput.under;
+
+        // Process Phase Insight Engine Displays
+        let currentTravel = travelDistances[travelDistances.length - 1] || 0;
+        let insightLabel = document.getElementById('travel-insight');
+        if(currentTravel === 0) {
+            insightLabel.innerText = "Rhythm: Calibrating System Matrices...";
+        } else if (currentTravel <= 9.2) {
+            insightLabel.innerText = "📈 Small Travel (Phase Keeping) - Stable Consistent Rhythm Detected";
+            insightLabel.style.color = "var(--green)";
+        } else {
+            insightLabel.innerText = "⚠️ Big Travel (High Volatility) - Directional Switches Imminent";
+            insightLabel.style.color = "var(--red)";
+        }
+
+        renderVisualChart();
+        updateUI();
+    }
+
+    function renderVisualChart() {
+        const canvas = document.getElementById('travelChart');
+        const ctx = canvas.getContext('2d');
+        
+        // Adjust Canvas bounding configurations reactively
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = 160;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (travelDistances.length === 0) return;
+
+        let points = travelDistances.slice(-15); // Slice down viewport focus elements to keep clear perspective
+        let xInterval = canvas.width / (Math.max(points.length - 1, 1));
+        
+        // Draw Heuristic Orange Reference Separation Line Array
+        let orangeY = canvas.height - (9.2 / 18) * canvas.height;
+        ctx.strokeStyle = '#f97316';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, orangeY);
+        ctx.lineTo(canvas.width, orangeY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Render calculated Travel Data Line
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        for (let i = 0; i < points.length; i++) {
+            // Map maximum physical travel depth index scale directly onto visual pixels
+            let yPos = canvas.height - (points[i] / 18) * canvas.height;
+            let xPos = i * xInterval;
+            if (i === 0) ctx.moveTo(xPos, yPos);
+            else ctx.lineTo(xPos, yPos);
+        }
+        ctx.stroke();
+
+        // Node Point Highlights
+        for (let i = 0; i < points.length; i++) {
+            let yPos = canvas.height - (points[i] / 18) * canvas.height;
+            let xPos = i * xInterval;
+            ctx.fillStyle = points[i] > 9.2 ? 'var(--red)' : 'var(--green)';
+            ctx.beginPath();
+            ctx.arc(xPos, yPos, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('s-cnt').innerText = rawNumbers.length;
+        document.getElementById('s-win').innerText = totalWins;
+        document.getElementById('s-loss').innerText = totalLosses;
+        document.getElementById('s-max-loss').innerText = Math.max(maxLossStreak, currentLossStreak);
+
+        const tbody = document.getElementById('logTable');
+        tbody.innerHTML = '';
+        
+        for (let i = rawNumbers.length - 1; i >= 0; i--) {
+            const numColor = rawNumbers[i] === 0 ? 'var(--green)' : (reds.includes(rawNumbers[i]) ? 'var(--red)' : '#fff');
+            let distVal = travelDistances[i] !== undefined ? travelDistances[i] : "-";
+            
+            let travelVector = "-";
+            if (distVal !== "-") {
+                travelVector = distVal > 9.2 ? `<span class="info-tag" style="color:var(--red)">BIG</span>` : `<span class="info-tag" style="color:var(--green)">SMALL</span>`;
+            }
+
+            let status = (trackedPredictions[i] && trackedPredictions[i].evaluation) ? trackedPredictions[i].evaluation : "-";
+            let statusClass = status === "WIN" ? "win-text" : (status === "LOSS" ? "loss-text" : "");
+
+            tbody.innerHTML += `<tr>
+                <td>${i + 1}</td>
+                <td style="font-weight:bold; color: ${numColor}">${rawNumbers[i]}</td>
+                <td style="font-weight:bold; color:var(--accent);">${distVal} slots</td>
+                <td>${travelVector}</td>
+                <td class="${statusClass}">${status}</td>
+            </tr>`;
+        }
+    }
+
+    function resetCounters() {
+        totalWins = 0;
+        totalLosses = 0;
+        maxLossStreak = 0;
+        currentLossStreak = 0;
+        document.getElementById('s-cnt').innerText = "0";
+        document.getElementById('s-win').innerText = "0";
+        document.getElementById('s-loss').innerText = "0";
+        document.getElementById('s-max-loss').innerText = "0";
+    }
+
+    function resetCountersAndRecompute() {
+        resetCounters();
+        if(rawNumbers.length > 0) {
+            trackedPredictions = Array(rawNumbers.length).fill({ main: null, over: null, under: null, activeUse: 'main', evaluation: "-" });
+            runCoreEngine();
+        }
+    }
+
+    function resetAll() {
+        rawNumbers = [];
+        trackedPredictions = [];
+        travelDistances = [];
+        document.getElementById('bulkData').value = '';
+        document.getElementById('p-main').innerText = "--";
+        document.getElementById('p-over').innerText = "--";
+        document.getElementById('p-under').innerText = "--";
+        document.getElementById('travel-insight').innerText = "Rhythm: Analysing Phase Velocity...";
+        document.getElementById('travel-insight').style.color = "var(--gold)";
+        document.getElementById('logTable').innerHTML = '';
+        
+        const canvas = document.getElementById('travelChart');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        resetCounters();
+    }
+
+    window.addEventListener('resize', renderVisualChart);
+    buildRouletteTable();
+</script>
+</body>
+</html>
         .setup-panel { background: var(--panel); border: 1px solid #2d3748; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; }
         .textarea-input { width: 100%; height: 80px; background: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
         
