@@ -3,24 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>High-Probability Multi-Sector Roulette Engine</title>
+    <title>Dynamic Roulette Master - Real-Time Delta Engine</title>
     <style>
-        :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #111827; --text: #f1f5f9; --gold: #fbbf24; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
-        <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette Master Pro - Dealer Signature Engine</title>
-    <style>
-        :root { --bg: #060913; --panel: #0f1626; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #02040a; --text: #f1f5f9; --gold: #fbbf24; --orange: #f97316; }
+        :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; --orange: #f97316; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .dashboard { max-width: 1550px; margin: 0 auto; display: grid; grid-template-columns: 1fr 420px; gap: 20px; }
         
         .setup-panel { background: var(--panel); border: 1px solid #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .textarea-input { width: 100%; height: 70px; background: #060913; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
+        .textarea-input { width: 100%; height: 70px; background: #05070f; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
         
         .controls { display: flex; gap: 15px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
         
@@ -29,18 +19,16 @@
         .stat-val { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
         .label-stat { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
 
-        .hero { background: linear-gradient(145deg, #1e293b, #02040a); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: center; }
+        .hero { background: linear-gradient(145deg, #1e293b, #010206); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: center; }
         .hero-section { border-right: 1px solid #1e293b; padding: 0 10px; }
         .hero-section:last-child { border-right: none; }
         .predict-title { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
         .predict-val { font-size: 2.2rem; font-weight: 900; color: var(--gold); margin-top: 5px; }
         .sub-tag { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-top: 4px; }
         
-        /* Travel Chart Canvas Layout */
         .chart-box { background: var(--panel); border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .canvas-container { position: relative; width: 100%; height: 160px; background: #02040a; border-radius: 8px; border: 1px solid #1e293b; overflow: hidden; }
+        .canvas-container { position: relative; width: 100%; height: 160px; background: #010206; border-radius: 8px; border: 1px solid #1e293b; overflow: hidden; }
         
-        /* Interactive Wheel Interface Layout */
         .roulette-container { background: #064e3b; padding: 15px; border-radius: 12px; border: 4px solid #065f46; display: flex; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); user-select: none; }
         .zero-cell { width: 55px; background: var(--green); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
         .zero-cell:hover, .grid-cell:hover { filter: brightness(1.2); transform: scale(1.02); z-index: 2; border-color: #fff; }
@@ -51,12 +39,12 @@
         .b-num { background: var(--black); color: white; }
 
         .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #1e293b; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .log-area { height: 480px; overflow-y: auto; background: #060913; border-radius: 8px; border: 1px solid #1e293b; }
+        .log-area { height: 480px; overflow-y: auto; background: #05070f; border-radius: 8px; border: 1px solid #1e293b; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #111a2e; padding: 12px; position: sticky; top: 0; color: var(--accent); border-bottom: 2px solid #1e293b; }
-        td { padding: 11px; text-align: center; border-bottom: 1px solid #111a2e; }
+        th { background: #0b111e; padding: 12px; position: sticky; top: 0; color: var(--accent); border-bottom: 2px solid #1e293b; }
+        td { padding: 11px; text-align: center; border-bottom: 1px solid #0b111e; }
         
-        .btn { padding: 11px 22px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #060913; }
+        .btn { padding: 11px 22px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #05070f; }
         .btn-danger { background: var(--red); color: white; }
         .btn-success { background: var(--green); color: white; }
         
@@ -69,17 +57,17 @@
 
 <div class="dashboard">
     <div class="setup-panel">
-        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. DEALER SIGNATURE CORE DATA ACQUISITION LOGS</h2>
-        <textarea id="bulkData" class="textarea-input" placeholder="Paste historical sequential spins to configure signature profile patterns (e.g., 22 11 4 19 12 36 1 20 ...)"></textarea>
+        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. HYPER-DYNAMIC REAL-TIME DELTA TRACKER</h2>
+        <textarea id="bulkData" class="textarea-input" placeholder="Paste sequential numbers to run instant velocity analysis (e.g., 22 11 4 19 12 36 1 20 ...)"></textarea>
         <div class="controls">
-            <button class="btn" onclick="processData(false)">Seed Signature Array</button>
-            <button class="btn btn-success" onclick="processData(true)">Execute Full Engine Simulation w/ Travel Metrics</button>
+            <button class="btn" onclick="processData(false)">Seed Velocity Array</button>
+            <button class="btn btn-success" onclick="processData(true)">Run Dynamic Flow Simulation</button>
         </div>
     </div>
 
     <div>
         <div class="stats-row">
-            <div class="stat-card"><span class="label-stat">Total Spins</span><span id="s-cnt" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label-stat">Spins Processed</span><span id="s-cnt" class="stat-val">0</span></div>
             <div class="stat-card"><span class="label-stat">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
             <div class="stat-card"><span class="label-stat">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
             <div class="stat-card"><span class="label-stat">Max Loss Streak</span><span id="s-max-loss" class="stat-val" style="color:var(--gold)">0</span></div>
@@ -87,9 +75,9 @@
 
         <div class="hero">
             <div class="hero-section">
-                <div class="predict-title">Main Prediction</div>
+                <div class="predict-title">Dynamic Prediction</div>
                 <div id="p-main" class="predict-val">--</div>
-                <div class="sub-tag">Base Tracker Target</div>
+                <div class="sub-tag" id="p-main-tag">Adaptive Pivot</div>
             </div>
             <div class="hero-section">
                 <div class="predict-title">TOP (OVER) Target</div>
@@ -105,8 +93,8 @@
 
         <div class="chart-box">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; font-weight:bold;">
-                <span style="color:var(--accent)">📈 REAL-TIME BALL TRAVEL FLOW DATA CHART</span>
-                <span id="travel-insight" style="color:var(--gold)">Rhythm: Analysing Phase Velocity...</span>
+                <span style="color:var(--accent)">📈 DYNAMIC MOMENTUM FLOW CHART</span>
+                <span id="travel-insight" style="color:var(--gold)">Rhythm: Awaiting Table Activity...</span>
             </div>
             <div class="canvas-container">
                 <canvas id="travelChart"></canvas>
@@ -136,12 +124,11 @@
                 <tbody id="logTable"></tbody>
             </table>
         </div>
-        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET LAYER SYSTEM</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET FLOW LOGS</button>
     </div>
 </div>
 
 <script>
-    // Standard European Wheel Sequence Configuration
     const wheelTrack = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     
@@ -174,7 +161,6 @@
         });
     }
 
-    // Mathematical Wheel Distance Solver
     function calculateWheelDistance(fromNum, toNum) {
         let indexA = wheelTrack.indexOf(fromNum);
         let indexB = wheelTrack.indexOf(toNum);
@@ -182,9 +168,8 @@
         return dist > 18 ? 37 - dist : dist; 
     }
 
-    // Resolves Racetrack Area Targets including Neighbours Verification
     function verifySectorHit(predictedNum, targetNeighbours, outcomeNum) {
-        if (predictedNum === null || predictedNum === "No Bet") return false;
+        if (!predictedNum || predictedNum === "No Bet") return false;
         let pIdx = wheelTrack.indexOf(Number(predictedNum));
         let oIdx = wheelTrack.indexOf(Number(outcomeNum));
         if (pIdx === -1 || oIdx === -1) return false;
@@ -201,9 +186,9 @@
 
     function processData(runSimulation = false) {
         const textStr = document.getElementById('bulkData').value.trim();
-        if (!textStr) return alert("Input a historical data stream array.");
+        if (!textStr) return alert("Please supply data points.");
         const parsed = textStr.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
-        if (parsed.length < 4) return alert("System requires at least 4 starting numbers to evaluate signatures.");
+        if (parsed.length < 3) return alert("Dynamic calibration needs at least 3 historical inputs.");
 
         resetCounters();
 
@@ -251,7 +236,7 @@
                 }
 
                 rawNumbers.push(currentSpin);
-                let signatureOutput = computeDealerSignatureModel();
+                let signatureOutput = computeDynamicDeltaModel();
 
                 trackedPredictions.push({
                     main: signatureOutput.main,
@@ -295,7 +280,7 @@
         }
 
         rawNumbers.push(num);
-        let signatureOutput = computeDealerSignatureModel();
+        let signatureOutput = computeDynamicDeltaModel();
 
         trackedPredictions.push({
             main: signatureOutput.main,
@@ -308,61 +293,77 @@
         runCoreEngine();
     }
 
-    // Pro-Signature Processing Core Heuristics
-    function computeDealerSignatureModel() {
-        if (rawNumbers.length < 3) return { main: "--", over: "--", under: "--", activeUse: 'main' };
+    // NEW LOGIC CORE: Pure Hyper-Dynamic Velocity Shifts (No history lag)
+    function computeDynamicDeltaModel() {
+        if (rawNumbers.length < 2) return { main: "--", over: "--", under: "--", activeUse: 'main' };
 
         let totalLen = rawNumbers.length;
         let lastNum = rawNumbers[totalLen - 1];
+        let currentTravel = travelDistances[travelDistances.length - 1] || 0;
+        let priorTravel = travelDistances[travelDistances.length - 2] || 0;
         
-        // Compute base localized trend bias weights
-        let weights = Array(37).fill(0);
-        for(let i = 1; i < totalLen; i++) {
-            let spaceDist = calculateWheelDistance(rawNumbers[i-1], rawNumbers[i]);
-            let targetNum = rawNumbers[i];
-            let decayMod = i / totalLen; // Reinforce recent dealer travel actions
-            weights[targetNum] += (37 - spaceDist) * decayMod;
+        // Calculate the Delta (Velocity acceleration or deceleration)
+        let deltaVelocity = currentTravel - priorTravel;
+        let lastIdx = wheelTrack.indexOf(lastNum);
+
+        // Project the dynamic physical displacement based strictly on the last vector jump
+        let dynamicOffset = Math.round(currentTravel);
+        if (Math.abs(deltaVelocity) > 4) {
+            // Big change in distance -> Expect directional swing across the wheel
+            dynamicOffset = Math.round((currentTravel + priorTravel) / 2);
         }
 
-        let mainTarget = 0, maxW = -1;
-        weights.forEach((w, idx) => { if(w > maxW) { maxW = w; mainTarget = idx; } });
+        // Apply directional projecting jump from the last resting number position
+        let projectedIdx = (lastIdx + dynamicOffset) % 37;
+        let dynamicBaseTarget = wheelTrack[projectedIdx];
 
-        // Build Multi-Heuristic Top Placements 
-        let currentTravel = travelDistances[travelDistances.length - 1] || 0;
-        const orangeLineRef = 9.2; // Fixed Heuristic Signature Separation Level
-        
-        // Calculate Top Offsets dynamically using localized wheel track coordinates
-        let baseIdx = wheelTrack.indexOf(mainTarget);
-        let overTarget = wheelTrack[(baseIdx + 3) % 37];
-        let underTarget = wheelTrack[(baseIdx - 3 + 37) % 37];
+        // Frame TOP (OVER) and TOP (UNDER) using short-range racetrack steps
+        let overTarget = wheelTrack[(projectedIdx + 4) % 37];
+        let underTarget = wheelTrack[(projectedIdx - 4 + 37) % 37];
 
-        let chosenTrackSide = 'main';
-        if (currentTravel > orangeLineRef) { chosenTrackSide = 'over'; }
-        else if (currentTravel > 0 && currentTravel <= orangeLineRef) { chosenTrackSide = 'under'; }
+        // Instantly classify which target strategy profile to force activate
+        const orangeLineRef = 9.2;
+        let activeStrategy = 'main';
+        if (currentTravel > orangeLineRef) {
+            activeStrategy = 'over'; // Above orange line -> use TOP OVER
+        } else if (currentTravel > 0) {
+            activeStrategy = 'under'; // Below orange line -> use TOP UNDER
+        }
 
         return {
-            main: `${mainTarget}n9`,
+            main: `${dynamicBaseTarget}n9`,
             over: `${overTarget}n4`,
             under: `${underTarget}n4`,
-            activeUse: chosenTrackSide
+            activeUse: activeStrategy
         };
     }
 
     function runCoreEngine() {
         if (rawNumbers.length === 0) return;
         
-        let signatureOutput = computeDealerSignatureModel();
+        let signatureOutput = computeDynamicDeltaModel();
         document.getElementById('p-main').innerText = signatureOutput.main;
         document.getElementById('p-over').innerText = signatureOutput.over;
         document.getElementById('p-under').innerText = signatureOutput.under;
 
-        // Process Phase Insight Engine Displays
+        let mainTag = document.getElementById('p-main-tag');
+        if (signatureOutput.activeUse === 'over') {
+            mainTag.innerText = "👉 Force Use: TOP OVER";
+            mainTag.style.color = "var(--orange)";
+        } else if (signatureOutput.activeUse === 'under') {
+            mainTag.innerText = "👉 Force Use: TOP UNDER";
+            mainTag.style.color = "var(--accent)";
+        } else {
+            mainTag.innerText = "Base Tracker Target";
+            mainTag.style.color = "var(--accent)";
+        }
+
         let currentTravel = travelDistances[travelDistances.length - 1] || 0;
         let insightLabel = document.getElementById('travel-insight');
         if(currentTravel === 0) {
-            insightLabel.innerText = "Rhythm: Calibrating System Matrices...";
+            insightLabel.innerText = "Rhythm: Synchronizing Delta States...";
         } else if (currentTravel <= 9.2) {
-            insightLabel.innerText = "📈 Small Travel (Phase Keeping) - Stable Consistent Rhythm Detected";
+            insightLabel.innerText = "📉 Small Travel (Phase Keeping) - Stable Consistent Rhythm Detected";
             insightLabel.style.color = "var(--green)";
         } else {
             insightLabel.innerText = "⚠️ Big Travel (High Volatility) - Directional Switches Imminent";
@@ -377,17 +378,15 @@
         const canvas = document.getElementById('travelChart');
         const ctx = canvas.getContext('2d');
         
-        // Adjust Canvas bounding configurations reactively
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = 160;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (travelDistances.length === 0) return;
 
-        let points = travelDistances.slice(-15); // Slice down viewport focus elements to keep clear perspective
+        let points = travelDistances.slice(-15); 
         let xInterval = canvas.width / (Math.max(points.length - 1, 1));
         
-        // Draw Heuristic Orange Reference Separation Line Array
         let orangeY = canvas.height - (9.2 / 18) * canvas.height;
         ctx.strokeStyle = '#f97316';
         ctx.lineWidth = 2;
@@ -398,13 +397,11 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Render calculated Travel Data Line
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 3;
         ctx.beginPath();
 
         for (let i = 0; i < points.length; i++) {
-            // Map maximum physical travel depth index scale directly onto visual pixels
             let yPos = canvas.height - (points[i] / 18) * canvas.height;
             let xPos = i * xInterval;
             if (i === 0) ctx.moveTo(xPos, yPos);
@@ -412,7 +409,6 @@
         }
         ctx.stroke();
 
-        // Node Point Highlights
         for (let i = 0; i < points.length; i++) {
             let yPos = canvas.height - (points[i] / 18) * canvas.height;
             let xPos = i * xInterval;
@@ -481,7 +477,9 @@
         document.getElementById('p-main').innerText = "--";
         document.getElementById('p-over').innerText = "--";
         document.getElementById('p-under').innerText = "--";
-        document.getElementById('travel-insight').innerText = "Rhythm: Analysing Phase Velocity...";
+        document.getElementById('p-main-tag').innerText = "Adaptive Pivot";
+        document.getElementById('p-main-tag').style.color = "var(--accent)";
+        document.getElementById('travel-insight').innerText = "Rhythm: Awaiting Table Activity...";
         document.getElementById('travel-insight').style.color = "var(--gold)";
         document.getElementById('logTable').innerHTML = '';
         
@@ -493,419 +491,6 @@
     }
 
     window.addEventListener('resize', renderVisualChart);
-    buildRouletteTable();
-</script>
-</body>
-</html>
-        .setup-panel { background: var(--panel); border: 1px solid #2d3748; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; }
-        .textarea-input { width: 100%; height: 80px; background: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
-        
-        .controls { display: flex; gap: 15px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
-        select { background: #0b0f19; color: white; border: 1px solid #334155; padding: 10px; border-radius: 6px; font-size: 1rem; cursor: pointer; }
-        
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #2d3748; }
-        .stat-val { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
-        .label-stat { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
-
-        .hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
-        #target-main { font-size: 2.6rem; font-weight: 900; color: var(--gold); line-height: 1.2; margin: 10px 0; }
-        #confidence-bar { font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
-        
-        .roulette-container { background: #064e3b; padding: 15px; border-radius: 12px; border: 4px solid #065f46; display: flex; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); user-select: none; }
-        .zero-cell { width: 50px; background: var(--green); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
-        .zero-cell:hover, .grid-cell:hover { filter: brightness(1.2); transform: scale(1.02); z-index: 2; }
-        .grid-rows { display: flex; flex-direction: column; gap: 3px; flex-grow: 1; margin-left: 3px; }
-        .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
-        .grid-cell { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); font-size: 1.1rem; transition: all 0.1s; }
-        .r-num { background: var(--red); color: white; }
-        .b-num { background: var(--black); color: white; }
-
-        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        .log-area { height: 420px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #1e293b; padding: 12px; position: sticky; top: 0; color: var(--accent); }
-        td { padding: 10px; text-align: center; border-bottom: 1px solid #2d3748; }
-        
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #0b0f19; }
-        .btn:hover { opacity: 0.9; }
-        .btn-danger { background: var(--red); color: white; }
-        .btn-success { background: var(--green); color: white; }
-        
-        .win-text { color: var(--green); font-weight: bold; }
-        .loss-text { color: var(--red); font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<div class="dashboard">
-    <div class="setup-panel">
-        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. BULK DATA TRACKER & PREDICTIVE ANALYTICS</h2>
-        <textarea id="bulkData" class="textarea-input" placeholder="Paste 30+ sequential roulette outcomes (e.g., 22 11 4 19 12 36 1 20 ...)"></textarea>
-        
-        <div class="controls">
-            <label><strong>Target Bet Field:</strong></label>
-            <select id="betType" onchange="resetCountersAndRecompute()">
-                <option value="dozen">Single Dozen (D1, D2, or D3)</option>
-                <option value="column">Single Column (C1, C2, or C3)</option>
-                <option value="doubleStreet">Dual Double Street (1 Low + 1 High)</option>
-                <option value="street">Single Street (S1 - S12)</option>
-                <option value="corner">Single Corner (CR1 - CR22)</option>
-                <option value="split">Single Split (SP1 - SP60)</option>
-                <option value="straight">Single Straight Number (0 - 36)</option>
-            </select>
-            <button class="btn" onclick="processData(false)">Load Database Setup</button>
-            <button class="btn btn-success" onclick="processData(true)">Run High Profit Simulation</button>
-        </div>
-    </div>
-
-    <div>
-        <div class="stats-row">
-            <div class="stat-card"><span class="label-stat">Total Spins</span><span id="s-cnt" class="stat-val">0</span></div>
-            <div class="stat-card"><span class="label-stat">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
-            <div class="stat-card"><span class="label-stat">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
-            <div class="stat-card"><span class="label-stat">Max Pre-Win Loss Streak</span><span id="s-max-loss" class="stat-val" style="color:var(--gold)">0</span></div>
-        </div>
-
-        <div class="hero">
-            <div class="label" style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; font-size:0.8rem;">Optimal High-Probability Bet Selection</div>
-            <div id="target-main">Awaiting Data Pool...</div>
-            <div id="confidence-bar">Mathematical Priority Weight: --</div>
-        </div>
-
-        <h3 style="margin:0 0 10px 5px; font-size: 1rem; color:var(--text)">2. EUROPEAN LIVE INPUT SECTOR INTERFACE</h3>
-        <div class="roulette-container">
-            <div class="zero-cell" onclick="addSingleSpin(0)">0</div>
-            <div id="rouletteGrid" class="grid-rows"></div>
-        </div>
-    </div>
-
-    <div class="panel">
-        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">SPIN DATA STREAM LOG</h2>
-        <div class="log-area">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Num</th>
-                        <th>Pattern Value</th>
-                        <th>Bet Result</th>
-                    </tr>
-                </thead>
-                <tbody id="logTable"></tbody>
-            </table>
-        </div>
-        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET SESSION</button>
-    </div>
-</div>
-
-<script>
-    const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-    let rawNumbers = [];
-    let trackedPredictions = []; 
-    let totalWins = 0;
-    let totalLosses = 0;
-    let maxLossStreak = 0;
-    let currentLossStreak = 0;
-
-    function buildRouletteTable() {
-        const grid = document.getElementById('rouletteGrid');
-        const structure = [
-            [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
-            [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
-            [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
-        ];
-
-        structure.forEach(rowNumbers => {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'grid-row';
-            rowNumbers.forEach(num => {
-                const cell = document.createElement('div');
-                cell.className = `grid-cell ${reds.includes(num) ? 'r-num' : 'b-num'}`;
-                cell.innerText = num;
-                cell.onclick = () => addSingleSpin(num);
-                rowDiv.appendChild(cell);
-            });
-            grid.appendChild(rowDiv);
-        });
-    }
-
-    function getPatternValue(num, type) {
-        if (num === 0) return "Zero";
-        
-        switch(type) {
-            case "dozen": return "D" + Math.ceil(num / 12);
-            case "column": return "C" + (num % 3 === 0 ? 3 : num % 3);
-            case "doubleStreet": return "DS" + Math.ceil(num / 6);
-            case "street": return "S" + Math.ceil(num / 3);
-            case "straight": return "N" + num;
-            case "corner":
-                let crIdx = 1;
-                for (let box = 1; box <= 11; box++) {
-                    let top = box * 3;
-                    if ((num === top || num === top-1 || num === top-3 || num === top-4)) return "CR" + crIdx;
-                    crIdx++;
-                    if ((num === top-1 || num === top-2 || num === top-4 || num === top-5)) return "CR" + crIdx;
-                    crIdx++;
-                }
-                return "CR-Out"; 
-            case "split":
-                if (num % 3 !== 0 && num < 36) {
-                    if (num % 2 === 0) return "SP" + Math.ceil(num / 2);
-                }
-                return "SP" + (Math.ceil(num / 3) + 15);
-            default: return "N" + num;
-        }
-    }
-
-    function evaluateHit(predictions, outcomePattern) {
-        if (!predictions || predictions.includes("No Bet")) return "-";
-        
-        // Handle array verification if multi-target is chosen (e.g. Dual Double Streets)
-        if (Array.isArray(predictions)) {
-            return predictions.includes(outcomePattern) ? "WIN" : "LOSS";
-        }
-        return predictions === outcomePattern ? "WIN" : "LOSS";
-    }
-
-    function processData(runSimulation = false) {
-        const textStr = document.getElementById('bulkData').value.trim();
-        if (!textStr) {
-            alert("Please paste historical numeric data pools.");
-            return;
-        }
-        const parsed = textStr.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
-        if (parsed.length < 5) {
-            alert("Insufficient pool depth. Provide at least 5 outcomes.");
-            return;
-        }
-
-        resetCounters();
-
-        if (!runSimulation) {
-            rawNumbers = parsed;
-            trackedPredictions = Array(parsed.length).fill({ prediction: null, evaluation: "-" });
-            executeOptimizationEngine();
-        } else {
-            rawNumbers = [];
-            trackedPredictions = [];
-            
-            for (let i = 0; i < parsed.length; i++) {
-                const currentSpin = parsed[i];
-                const selectedBet = document.getElementById('betType').value;
-                const currentPattern = getPatternValue(currentSpin, selectedBet);
-
-                let evalStatus = "-";
-                if (trackedPredictions.length > 0) {
-                    let lastPrediction = trackedPredictions[trackedPredictions.length - 1].prediction;
-                    evalStatus = evaluateHit(lastPrediction, currentPattern);
-                    
-                    if (evalStatus === "WIN") {
-                        totalWins++;
-                        if (currentLossStreak > maxLossStreak) {
-                            maxLossStreak = currentLossStreak;
-                        }
-                        currentLossStreak = 0;
-                    } else if (evalStatus === "LOSS") {
-                        totalLosses++;
-                        currentLossStreak++;
-                    }
-                }
-
-                rawNumbers.push(currentSpin);
-                let targetedNextOptimal = calculateMarkovOptimalBet();
-                
-                trackedPredictions.push({
-                    prediction: targetedNextOptimal.bet,
-                    evaluation: evalStatus
-                });
-            }
-            executeOptimizationEngine();
-        }
-    }
-
-    function addSingleSpin(num) {
-        const selectedBet = document.getElementById('betType').value;
-        const currentPattern = getPatternValue(num, selectedBet);
-        let evalStatus = "-";
-
-        if (trackedPredictions.length > 0) {
-            let lastPrediction = trackedPredictions[trackedPredictions.length - 1].prediction;
-            evalStatus = evaluateHit(lastPrediction, currentPattern);
-            
-            if (evalStatus === "WIN") {
-                totalWins++;
-                if (currentLossStreak > maxLossStreak) {
-                    maxLossStreak = currentLossStreak;
-                }
-                currentLossStreak = 0;
-            } else if (evalStatus === "LOSS") {
-                totalLosses++;
-                currentLossStreak++;
-            }
-        }
-
-        rawNumbers.push(num);
-        let targetedNextOptimal = calculateMarkovOptimalBet();
-        
-        trackedPredictions.push({
-            prediction: targetedNextOptimal.bet,
-            evaluation: evalStatus
-        });
-
-        executeOptimizationEngine();
-    }
-
-    function calculateMarkovOptimalBet() {
-        if (rawNumbers.length < 4) return { bet: "No Bet", confidence: 0 };
-        
-        const selectedBet = document.getElementById('betType').value;
-        // Run underlying mapping on standard mode variants internally
-        const workingBetType = selectedBet === "doubleStreet" ? "doubleStreet" : selectedBet;
-        const patternStream = rawNumbers.map(n => getPatternValue(n, workingBetType));
-        
-        const totalLen = patternStream.length;
-        const currentPatternState = patternStream[totalLen - 1];
-        
-        let transitionalFrequencies = {};
-        for (let i = 0; i < totalLen - 1; i++) {
-            if (patternStream[i] === currentPatternState) {
-                let subsequentState = patternStream[i + 1];
-                transitionalFrequencies[subsequentState] = (transitionalFrequencies[subsequentState] || 0) + 1.5; 
-            }
-        }
-
-        let macroOccurrences = {};
-        patternStream.forEach((pat, index) => {
-            macroOccurrences[pat] = (macroOccurrences[pat] || 0) + (index / totalLen);
-        });
-
-        let optimizedScores = {};
-        Object.keys(macroOccurrences).forEach(key => {
-            if (key === "Zero") return;
-            let transitionalWeight = transitionalFrequencies[key] || 0;
-            let macroWeight = macroOccurrences[key] || 0;
-            optimizedScores[key] = (transitionalWeight * 0.7) + (macroWeight * 0.3);
-        });
-
-        // SPECIAL LOGIC: Handle Dual Low/High Selector for Double Streets
-        if (selectedBet === "doubleStreet") {
-            let bestLow = "No Bet", maxLow = -1;
-            let bestHigh = "No Bet", maxHigh = -1;
-
-            ["DS1", "DS2", "DS3"].forEach(ds => {
-                if ((optimizedScores[ds] || 0) > maxLow) {
-                    maxLow = optimizedScores[ds] || 0;
-                    bestLow = ds;
-                }
-            });
-            ["DS4", "DS5", "DS6"].forEach(ds => {
-                if ((optimizedScores[ds] || 0) > maxHigh) {
-                    maxHigh = optimizedScores[ds] || 0;
-                    bestHigh = ds;
-                }
-            });
-
-            return {
-                bet: [bestLow, bestHigh],
-                confidence: Math.round((maxLow + maxHigh) * 5)
-            };
-        }
-
-        // Standard Single Choice Selection Logic
-        let absoluteBestBet = "No Bet";
-        let maxScore = 0;
-        Object.keys(optimizedScores).forEach(key => {
-            if (optimizedScores[key] > maxScore) {
-                maxScore = optimizedScores[key];
-                absoluteBestBet = key;
-            }
-        });
-
-        return {
-            bet: absoluteBestBet,
-            confidence: Math.round(maxScore * 10)
-        };
-    }
-
-    function executeOptimizationEngine() {
-        if (rawNumbers.length < 1) return;
-        
-        const selectedBet = document.getElementById('betType').value;
-        const patternStream = rawNumbers.map(n => getPatternValue(n, selectedBet));
-        let targetedNextOptimal = calculateMarkovOptimalBet();
-
-        const mainOutput = document.getElementById('target-main');
-        const confidenceOutput = document.getElementById('confidence-bar');
-
-        if (targetedNextOptimal.bet !== "No Bet") {
-            if (Array.isArray(targetedNextOptimal.bet)) {
-                mainOutput.innerText = `${targetedNextOptimal.bet[0]} + ${targetedNextOptimal.bet[1]}`;
-            } else {
-                mainOutput.innerText = `${targetedNextOptimal.bet}`;
-            }
-            confidenceOutput.innerText = `Mathematical Priority Weight: ${targetedNextOptimal.confidence}`;
-        } else {
-            mainOutput.innerText = "No Bet";
-            confidenceOutput.innerText = "Mathematical Priority Weight: --";
-        }
-
-        updateUI(patternStream);
-    }
-
-    function updateUI(patternStream) {
-        document.getElementById('s-cnt').innerText = rawNumbers.length;
-        document.getElementById('s-win').innerText = totalWins;
-        document.getElementById('s-loss').innerText = totalLosses;
-        // Handle displaying the highest risk line encountered cleanly
-        document.getElementById('s-max-loss').innerText = Math.max(maxLossStreak, currentLossStreak);
-
-        const tbody = document.getElementById('logTable');
-        tbody.innerHTML = '';
-        
-        for (let i = rawNumbers.length - 1; i >= 0; i--) {
-            const numColor = rawNumbers[i] === 0 ? 'var(--green)' : (reds.includes(rawNumbers[i]) ? 'var(--red)' : '#fff');
-            let status = (trackedPredictions[i] && trackedPredictions[i].evaluation) ? trackedPredictions[i].evaluation : "-";
-            let statusClass = status === "WIN" ? "win-text" : (status === "LOSS" ? "loss-text" : "");
-
-            tbody.innerHTML += `<tr>
-                <td>${i + 1}</td>
-                <td style="font-weight:bold; color: ${numColor}">${rawNumbers[i]}</td>
-                <td style="color: var(--gold); font-weight:bold;">${patternStream[i]}</td>
-                <td class="${statusClass}">${status}</td>
-            </tr>`;
-        }
-    }
-
-    function resetCounters() {
-        totalWins = 0;
-        totalLosses = 0;
-        maxLossStreak = 0;
-        currentLossStreak = 0;
-        document.getElementById('s-cnt').innerText = "0";
-        document.getElementById('s-win').innerText = "0";
-        document.getElementById('s-loss').innerText = "0";
-        document.getElementById('s-max-loss').innerText = "0";
-    }
-
-    function resetCountersAndRecompute() {
-        resetCounters();
-        if(rawNumbers.length > 0) {
-            trackedPredictions = Array(rawNumbers.length).fill({ prediction: null, evaluation: "-" });
-            executeOptimizationEngine();
-        }
-    }
-
-    function resetAll() {
-        rawNumbers = [];
-        trackedPredictions = [];
-        document.getElementById('bulkData').value = '';
-        document.getElementById('target-main').innerText = "Awaiting Data Pool...";
-        document.getElementById('confidence-bar').innerText = "Mathematical Priority Weight: --";
-        document.getElementById('logTable').innerHTML = '';
-        resetCounters();
-    }
-
     buildRouletteTable();
 </script>
 </body>
