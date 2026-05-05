@@ -3,211 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pattern Distance Predictor</title>
+    <title>Pattern Sequence Predictor</title>
     <style>
         :root { --bg: #0b0f19; --panel: #161e2d; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #1e293b; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+        .dashboard { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
         
-        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #2d3748; }
-        .stat-val { display: block; font-size: 2rem; font-weight: 800; line-height: 1.2; }
-        .label { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
-
+        .setup-panel { background: var(--panel); border: 1px solid #2d3748; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; }
+        .textarea-input { width: 100%; height: 80px; background: #0b0f19; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
+        
+        .controls { display: flex; gap: 15px; margin-top: 10px; align-items: center; }
+        select, input[type="number"] { background: #0b0f19; color: white; border: 1px solid #334155; padding: 10px; border-radius: 6px; font-size: 1rem; }
+        
         .hero { background: linear-gradient(145deg, #1e293b, #0f172a); border: 2px solid var(--accent); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
-        #target-main { font-size: 4.5rem; font-weight: 900; color: var(--gold); line-height: 1; margin: 5px 0; }
-        #neighbors { font-size: 1.3rem; color: var(--accent); font-weight: 600; }
-
-        .table-container { background: #064e3b; padding: 20px; border-radius: 15px; border: 5px solid #065f46; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .zero-box { width: 60px; background: var(--green); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; cursor: pointer; border-radius: 8px 0 0 8px; margin-right: 4px; }
-        .rows-container { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
-        .r-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
-        .n-cell { height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); transition: 0.1s; font-size: 1.1rem; }
-        .n-cell:hover { transform: scale(1.05); z-index: 2; border-color: white; }
-        .red { background: var(--red); color: white; }
-        .blk { background: var(--black); color: white; }
-
+        #target-main { font-size: 2.5rem; font-weight: 900; color: var(--gold); line-height: 1.2; margin: 10px 0; }
+        
         .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
-        .log-area { height: 450px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
+        .log-area { height: 400px; overflow-y: auto; background: #0b0f19; border-radius: 8px; border: 1px solid #334155; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th { background: #1e293b; padding: 12px; position: sticky; top: 0; color: var(--accent); }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #2d3748; }
-        .win { color: var(--green); font-weight: bold; }
-        .loss { color: var(--red); opacity: 0.8; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #0b0f19; }
+        .btn:hover { opacity: 0.9; }
+        .btn-danger { background: var(--red); color: white; }
+        
+        .recent-strip { display: flex; gap: 8px; justify-content: center; margin: 10px 0; font-size: 1.2rem; font-weight: bold; }
+        .badge { padding: 4px 10px; border-radius: 4px; background: #334155; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
+    <div class="setup-panel">
+        <h2 style="margin:0 0 10px 0; font-size: 1.2rem; color: var(--accent);">1. BULK DATA ENTRY (Enter 30+ numbers to start)</h2>
+        <textarea id="bulkData" class="textarea-input" placeholder="Example: 22 11 4 19 12 36 1 20 ..."></textarea>
+        
+        <div class="controls">
+            <label><strong>Bet Type:</strong></label>
+            <select id="betType" onchange="processData()">
+                <option value="dozen">Dozen (D1, D2, D3)</option>
+                <option value="column">Column (C1, C2, C3)</option>
+                <option value="doubleStreet">Double Street (DS1 - DS6)</option>
+            </select>
+            <button class="btn" onclick="processData()">Parse & Initialize Data</button>
+        </div>
+    </div>
+
     <div>
-        <div class="stats-row">
-            <div class="stat-card"><span class="label">Spins</span><span id="s-cnt" class="stat-val">0</span></div>
-            <div class="stat-card"><span class="label">Wins (Hits)</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
-            <div class="stat-card"><span class="label">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
-        </div>
-
         <div class="hero">
-            <div class="label" id="prediction-info">Waiting for data...</div>
-            <div id="target-main">--</div>
-            <div id="neighbors">-- [ -- ] --</div>
+            <div class="label" style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Latest 3 Results Pattern Sequence</div>
+            <div id="recentPattern" class="recent-strip">-- : -- : --</div>
+            <hr style="border-color: #2d3748; margin: 15px 0;">
+            <div class="label" style="text-transform: uppercase; letter-spacing: 1px; color: var(--accent);">Historical Predicted Matches Found After This Sequence</div>
+            <div id="target-main">Awaiting Sequence Match...</div>
         </div>
 
-        <div class="table-container">
-            <div class="zero-box" onclick="track(0)">0</div>
-            <div id="gridBody" class="rows-container"></div>
+        <div class="panel" style="margin-bottom: 20px;">
+            <h2 style="margin:0 0 10px 0; font-size: 1rem; color:var(--accent)">2. ADD NEW SPIN ONE-BY-ONE</h2>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="singleNum" min="0" max="36" placeholder="e.g. 25" style="flex-grow: 1;">
+                <button class="btn" onclick="addSingleSpin()">Add Spin</button>
+            </div>
         </div>
     </div>
 
     <div class="panel">
-        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">NUMBER-SPECIFIC HISTORY</h2>
+        <h2 style="margin:0 0 15px 0; font-size: 1rem; color:var(--accent)">SPIN DATA STREAM</h2>
         <div class="log-area">
             <table>
                 <thead>
-                    <tr><th>#</th><th>Entered</th><th>Prediction</th><th>Status</th></tr>
+                    <tr>
+                        <th>Index</th>
+                        <th>Number</th>
+                        <th>Pattern Value</th>
+                    </tr>
                 </thead>
                 <tbody id="logTable"></tbody>
             </table>
         </div>
-        <button class="btn" style="background:#334155; color:white;" onclick="resetAll()">RESET SESSION</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET SESSION</button>
     </div>
 </div>
 
 <script>
-    // European Wheel
-    const wheel = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
-    const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-    
-    let history = []; // Stores {num, distFromPrev}
-    let wins = 0, losses = 0;
-    let nextPred = null, nextNeighbors = [];
+    let rawNumbers = []; // Main array storing ordered integers
 
-    function buildTable() {
-        const container = document.getElementById('gridBody');
-        const layout = [
-            [3,6,9,12,15,18,21,24,27,30,33,36],
-            [2,5,8,11,14,17,20,23,26,29,32,35],
-            [1,4,7,10,13,16,19,22,25,28,31,34]
-        ];
-        layout.forEach(rowNums => {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'r-row';
-            rowNums.forEach(n => {
-                const cell = document.createElement('div');
-                cell.className = `n-cell ${reds.includes(n) ? 'red' : 'blk'}`;
-                cell.innerText = n;
-                cell.onclick = () => track(n);
-                rowDiv.appendChild(cell);
-            });
-            container.appendChild(rowDiv);
-        });
-    }
-
-    function track(n) {
-        let status = "-";
+    // Mapping Functions for Roulette properties
+    function getPatternValue(num, type) {
+        if (num === 0) return "Zero";
         
-        // 1. Check if previous prediction was correct
-        if (nextPred !== null) {
-            if (nextNeighbors.includes(n)) {
-                wins++;
-                status = "WIN";
-            } else {
-                losses++;
-                status = "LOSS";
-            }
+        if (type === "dozen") {
+            if (num <= 12) return "D1";
+            if (num <= 24) return "D2";
+            return "D3";
         }
-
-        // 2. Calculate distance from previous number on the wheel
-        let dist = null;
-        if (history.length > 0) {
-            const lastNum = history[history.length - 1].num;
-            const idxCurr = wheel.indexOf(n);
-            const idxPrev = wheel.indexOf(lastNum);
-            dist = (idxCurr - idxPrev + 37) % 37;
+        
+        if (type === "column") {
+            if (num % 3 === 1) return "C1";
+            if (num % 3 === 2) return "C2";
+            return "C3";
         }
-
-        // 3. Save to history
-        history.push({ num: n, dist: dist, pred: nextPred, status: status });
-
-        // 4. Calculate prediction for NEXT spin based on new input
-        calculateNext(n);
-        updateUI();
+        
+        if (type === "doubleStreet") {
+            if (num <= 6) return "DS1";
+            if (num <= 12) return "DS2";
+            if (num <= 18) return "DS3";
+            if (num <= 24) return "DS4";
+            if (num <= 30) return "DS5";
+            return "DS6";
+        }
     }
 
-    function calculateNext(currentNum) {
-        // FIND ALL INSTANCES OF THIS NUMBER IN HISTORY
-        // We look for where history[i].num == currentNum AND there was a spin AFTER it
-        let matchingDistances = [];
+    // Process textarea bulk input data
+    function processData() {
+        const textStr = document.getElementById('bulkData').value.trim();
+        if (!textStr) {
+            alert("Please paste historical data numbers first.");
+            return;
+        }
 
-        for (let i = 0; i < history.length - 1; i++) {
-            if (history[i].num === currentNum) {
-                // The distance of the number that came AFTER this instance
-                let followDist = history[i+1].dist;
-                if (followDist !== null) {
-                    matchingDistances.push(followDist);
-                }
+        // Clean up text format split via spaces or commas
+        const parsed = textStr.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
+        
+        if (parsed.length < 3) {
+            alert("Please input at least 3 numbers to formulate pattern combinations.");
+            return;
+        }
+
+        rawNumbers = parsed;
+        analyzePatterns();
+    }
+
+    // Add a manual one-by-one spin
+    function addSingleSpin() {
+        const inputEl = document.getElementById('singleNum');
+        const val = parseInt(inputEl.value, 10);
+        
+        if (isNaN(val) || val < 0 || val > 36) {
+            alert("Please enter a valid roulette number (0-36).");
+            return;
+        }
+        
+        rawNumbers.push(val);
+        inputEl.value = '';
+        analyzePatterns();
+    }
+
+    // Main structural mathematical engine
+    function analyzePatterns() {
+        const selectedBet = document.getElementById('betType').value;
+        
+        // 1. Convert all historical numeric hits into selected pattern codes
+        const patternStream = rawNumbers.map(n => getPatternValue(n, selectedBet));
+
+        // 2. Extract latest 3 processed tags
+        const totalLen = patternStream.length;
+        const last3 = patternStream.slice(-3);
+        
+        // Update live status header display
+        document.getElementById('recentPattern').innerHTML = last3.map(p => `<span class="badge">${p}</span>`).join(" ");
+
+        // 3. Scan structural past dataset looking for identical sequences
+        let matchesFound = [];
+        
+        // Look through indices up to length - 3 so we have an element available ahead
+        for (let i = 0; i <= totalLen - 4; i++) {
+            if (
+                patternStream[i] === last3[0] &&
+                patternStream[i + 1] === last3[1] &&
+                patternStream[i + 2] === last3[2]
+            ) {
+                // Fetch Next Predicted element coming right after the set match
+                const nextPredictionElement = patternStream[i + 3];
+                const realNextNum = rawNumbers[i + 3];
+                matchesFound.push(`${nextPredictionElement} (${realNextNum})`);
             }
         }
 
-        let avgDist;
-        const infoBox = document.getElementById('prediction-info');
-
-        if (matchingDistances.length > 0) {
-            // Logic: Average the distances that occurred after the number currentNum
-            avgDist = matchingDistances.reduce((a, b) => a + b, 0) / matchingDistances.length;
-            infoBox.innerText = `Based on ${matchingDistances.length} past case(s) for ${currentNum}`;
+        // 4. Print predictions out to dashboard UI
+        const outputField = document.getElementById('target-main');
+        if (matchesFound.length > 0) {
+            outputField.innerHTML = [...new Set(matchesFound)].join(" | ");
         } else {
-            // Fallback: If this number hasn't appeared before, use global average or 0
-            const allDists = history.filter(h => h.dist !== null).map(h => h.dist);
-            avgDist = allDists.length > 0 ? (allDists.reduce((a, b) => a + b, 0) / allDists.length) : 0;
-            infoBox.innerText = `New number ${currentNum}: Using global average distance`;
+            outputField.innerHTML = "No matching pattern found in history.";
         }
 
-        // Apply average distance to current wheel position
-        const currentIdx = wheel.indexOf(currentNum);
-        const targetIdx = (currentIdx + Math.round(avgDist)) % 37;
-        
-        nextPred = wheel[targetIdx];
-        
-        // Set neighbors (Target + 1 on each side)
-        const nIdx = wheel.indexOf(nextPred);
-        nextNeighbors = [
-            wheel[(nIdx - 1 + 37) % 37],
-            nextPred,
-            wheel[(nIdx + 1) % 37]
-        ];
+        // Update overall data grid interface
+        updateUI(patternStream);
     }
 
-    function updateUI() {
-        document.getElementById('s-cnt').innerText = history.length;
-        document.getElementById('s-win').innerText = wins;
-        document.getElementById('s-loss').innerText = losses;
-        document.getElementById('target-main').innerText = nextPred;
-        document.getElementById('neighbors').innerText = `${nextNeighbors[0]} - [${nextNeighbors[1]}] - ${nextNeighbors[2]}`;
-
+    // Update historical UI viewports
+    function updateUI(patternStream) {
         const tbody = document.getElementById('logTable');
         tbody.innerHTML = '';
-        [...history].reverse().forEach((h, i) => {
-            const idx = history.length - 1 - i;
+        
+        // Create matching reversed historical tables
+        for (let i = rawNumbers.length - 1; i >= 0; i--) {
             tbody.innerHTML += `<tr>
-                <td>${idx + 1}</td>
-                <td style="font-weight:bold; color:${h.num===0?'#10b981':(reds.includes(h.num)?'#ef4444':'#fff')}">${h.num}</td>
-                <td>${h.pred !== null ? h.pred : '--'}</td>
-                <td class="${h.status === 'WIN' ? 'win' : 'loss'}">${h.status}</td>
+                <td>${i + 1}</td>
+                <td style="font-weight:bold; color: #fff">${rawNumbers[i]}</td>
+                <td style="color: var(--gold); font-weight:bold;">${patternStream[i]}</td>
             </tr>`;
-        });
+        }
     }
 
+    // Clear tracking cache memory completely
     function resetAll() {
-        history = []; wins = 0; losses = 0;
-        nextPred = null; nextNeighbors = [];
-        document.getElementById('target-main').innerText = "--";
-        document.getElementById('neighbors').innerText = "-- [ -- ] --";
-        document.getElementById('prediction-info').innerText = "Waiting for data...";
-        updateUI();
+        rawNumbers = [];
+        document.getElementById('bulkData').value = '';
+        document.getElementById('singleNum').value = '';
+        document.getElementById('recentPattern').innerText = "-- : -- : --";
+        document.getElementById('target-main').innerText = "Awaiting Sequence Match...";
+        document.getElementById('logTable').innerHTML = '';
     }
-
-    buildTable();
 </script>
 </body>
 </html>
