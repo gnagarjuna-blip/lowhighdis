@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Roulette Master - Strategy Dropdown Engine</title>
+    <title>Dynamic Roulette Master - Collective History Engine</title>
     <style>
         :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; --orange: #f97316; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
@@ -25,7 +25,7 @@
         .hero-section { border-right: 1px solid #1e293b; padding: 0 10px; }
         .hero-section:last-child { border-right: none; }
         .predict-title { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
-        .predict-val { font-size: 1.5rem; font-weight: 900; color: var(--gold); margin-top: 5px; }
+        .predict-val { font-size: 1.4rem; font-weight: 900; color: var(--gold); margin-top: 5px; }
         .sub-tag { font-size: 0.85rem; color: var(--accent); font-weight: bold; margin-top: 4px; }
         
         .chart-box { background: var(--panel); border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
@@ -52,14 +52,13 @@
         
         .win-text { color: var(--green); font-weight: bold; }
         .loss-text { color: var(--red); font-weight: bold; }
-        .info-tag { font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; background: #1e293b; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
     <div class="setup-panel">
-        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. NEIGHBORHOOD HISTORY RELATIVE ENGINE WITH MATRIX FILTER</h2>
+        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">1. NEIGHBORHOOD HISTORY RELATIVE COLLECTIVE</h2>
         <textarea id="bulkData" class="textarea-input" placeholder="Paste sequential numbers to seed history (e.g., 22 1 12 13 29 10 29 23 28 1 17 25)"></textarea>
         <div class="controls">
             <select id="strategyFilter" class="select-input" onchange="runCoreEngine()">
@@ -67,7 +66,6 @@
                 <option value="street">Street Mode</option>
                 <option value="corner">Corner Mode</option>
                 <option value="split">Split Mode</option>
-                <option value="all">Dynamic Smart Mix (Auto-All)</option>
             </select>
             <button class="btn" onclick="processData(false)">Seed Numbers Array</button>
             <button class="btn btn-success" onclick="processData(true)">Run Auto Prediction Simulation</button>
@@ -84,19 +82,19 @@
 
         <div class="hero">
             <div class="hero-section">
-                <div class="predict-title">Left Side Target (Low)</div>
+                <div class="predict-title">Left Side Collective (Low)</div>
                 <div id="p-under" class="predict-val" style="color:var(--accent)">--</div>
-                <div class="sub-tag" id="p-under-tag">Prev Pattern Match</div>
+                <div class="sub-tag" id="p-under-tag">Prev Neighbors Match</div>
             </div>
             <div class="hero-section">
-                <div class="predict-title">Right Side Target (High)</div>
+                <div class="predict-title">Right Side Collective (High)</div>
                 <div id="p-over" class="predict-val" style="color:var(--orange)">--</div>
-                <div class="sub-tag" id="p-over-tag">Next Pattern Match</div>
+                <div class="sub-tag" id="p-over-tag">Next Neighbors Match</div>
             </div>
             <div class="hero-section">
                 <div class="predict-title">Selected Active Play</div>
                 <div id="p-main" class="predict-val">--</div>
-                <div class="sub-tag" id="p-main-tag">Adaptive Strategy Pivot</div>
+                <div class="sub-tag" id="p-main-tag">Hottest Group Selected</div>
             </div>
         </div>
 
@@ -125,8 +123,8 @@
                     <tr>
                         <th>#</th>
                         <th>Num</th>
-                        <th>Left Match (Low)</th>
-                        <th>Right Match (High)</th>
+                        <th>Left Collect (Low)</th>
+                        <th>Right Collect (High)</th>
                         <th>Result</th>
                     </tr>
                 </thead>
@@ -192,16 +190,17 @@
         });
     }
 
-    function checkLayoutHit(predictionString, outcomeNum) {
-        if (!predictionString || predictionString === "--" || predictionString === "No Bet") return false;
-        let targets = [];
-        let cleanName = predictionString.split(" (")[0];
-
+    function checkLayoutHit(predictionNames, outcomeNum) {
+        if (!predictionNames || predictionNames === "--" || predictionNames === "No Bet") return false;
+        
+        // Handle comma-separated multiple hits if any
+        let namesArray = predictionNames.split(', ');
         let collection = [...doubleStreets, ...streets, ...corners, ...splits];
-        let found = collection.find(c => c.name === cleanName);
-        if (found) targets = found.nums;
-
-        return targets.includes(Number(outcomeNum));
+        
+        return namesArray.some(name => {
+            let found = collection.find(c => c.name === name);
+            return found ? found.nums.includes(Number(outcomeNum)) : false;
+        });
     }
 
     function processData(runSimulation = false) {
@@ -287,7 +286,7 @@
         runCoreEngine();
     }
 
-    // MAIN SELECTION INTERPRETER MATRIX
+    // MAIN PIECE NEIGHBOR COLLECT MATRIX ENGINE
     function computeHistoricalNeighborLayout() {
         if (rawNumbers.length < 2) return { main: "--", over: "--", under: "--" };
 
@@ -295,68 +294,70 @@
         let activePivot = rawNumbers[totalLen - 1]; 
         let strategyMode = document.getElementById('strategyFilter').value;
 
-        let leftNeighbors = [];  
-        let rightNeighbors = []; 
+        let leftNeighbors = [];  // Low numbers collection
+        let rightNeighbors = []; // High numbers collection
 
+        // Find every single occurrence of the active pivot number in history
         for (let i = 0; i < totalLen - 1; i++) {
             if (rawNumbers[i] === activePivot) {
                 if (i > 0) leftNeighbors.push(rawNumbers[i - 1]);
-                if (i < totalLen - 2) rightNeighbors.push(rawNumbers[i + 1]);
+                if (i < totalLen - 1) rightNeighbors.push(rawNumbers[i + 1]);
             }
         }
 
-        let leftLayout = findBestLayoutForDataset(leftNeighbors, rawNumbers, strategyMode);
-        let rightLayout = findBestLayoutForDataset(rightNeighbors, rawNumbers, strategyMode);
+        // Directly extract predictions from the collective elements array
+        let leftPrediction = getCollectiveLayoutPredictions(leftNeighbors, strategyMode);
+        let rightPrediction = getCollectiveLayoutPredictions(rightNeighbors, strategyMode);
 
-        let chosenStrategy = "--";
-        if (leftLayout !== "--" && rightLayout !== "--") {
-            let leftScore = parseFloat(leftLayout.split("(")[1]) || 0;
-            let rightScore = parseFloat(rightLayout.split("(")[1]) || 0;
-            chosenStrategy = leftScore >= rightScore ? leftLayout.split(" (")[0] : rightLayout.split(" (")[0];
-        } else if (leftLayout !== "--") {
-            chosenStrategy = leftLayout.split(" (")[0];
-        } else if (rightLayout !== "--") {
-            chosenStrategy = rightLayout.split(" (")[0];
+        // Active Play resolution: Compare layout occurrence counts between left and right subsets to output the hotter one
+        let chosenMain = "--";
+        if (leftPrediction !== "--" || rightPrediction !== "--") {
+            let leftCount = leftNeighbors.length;
+            let rightCount = rightNeighbors.length;
+            chosenMain = (leftCount >= rightCount) ? leftPrediction : rightPrediction;
         }
 
         return {
-            under: leftLayout,
-            over: rightLayout,
-            main: chosenStrategy
+            under: leftPrediction,
+            over: rightPrediction,
+            main: chosenMain
         };
     }
 
-    // Isolated Strategy Filter Execution
-    function findBestLayoutForDataset(dataset, historyLog, strategyMode) {
-        if (!dataset || dataset.length === 0) return "--";
+    // Direct Grouping function: Matches numbers to their target strategy group layouts
+    function getCollectiveLayoutPredictions(neighborsCollection, strategyMode) {
+        if (!neighborsCollection || neighborsCollection.length === 0) return "--";
 
-        let collection = [];
-        if (strategyMode === "doubleStreet") collection = doubleStreets;
-        else if (strategyMode === "street") collection = streets;
-        else if (strategyMode === "corner") collection = corners;
-        else if (strategyMode === "split") collection = splits;
-        else collection = [...doubleStreets, ...streets, ...corners, ...splits];
+        let pool = [];
+        if (strategyMode === "doubleStreet") pool = doubleStreets;
+        else if (strategyMode === "street") pool = streets;
+        else if (strategyMode === "corner") pool = corners;
+        else if (strategyMode === "split") pool = splits;
 
-        let bestLayout = "--";
-        let maxScore = -1;
+        let detectedLayoutsMap = {};
 
-        collection.forEach(layout => {
-            let localHits = dataset.filter(n => layout.nums.includes(n)).length;
-            if(localHits > 0) {
-                let contextScore = localHits / dataset.length;
-                let globalHits = historyLog.filter(n => layout.nums.includes(n)).length;
-                let globalWeight = (globalHits / historyLog.length) * 0.1; 
-                
-                let combinedScore = contextScore + globalWeight;
-
-                if (combinedScore > maxScore) {
-                    maxScore = combinedScore;
-                    bestLayout = `${layout.name} (${(contextScore * 100).toFixed(0)}% Hot)`;
+        // Run through each collected neighbor and pull the names of layouts it lives inside
+        neighborsCollection.forEach(num => {
+            pool.forEach(layout => {
+                if (layout.nums.includes(num)) {
+                    detectedLayoutsMap[layout.name] = (detectedLayoutsMap[layout.name] || 0) + 1;
                 }
-            }
+            });
         });
 
-        return bestLayout;
+        // Pull out layout groups that showed up
+        let entries = Object.entries(detectedLayoutsMap);
+        if (entries.length === 0) return "--";
+
+        // Sort to discover which specific layout is most prominent within this collection
+        entries.sort((a, b) => b[1] - a[a]);
+        let maxHits = entries[0][1];
+        
+        // Find if multiple layouts tie for prominence, and collect them
+        let winners = entries.filter(e => e[1] === maxHits).map(e => e[0]);
+
+        // Join them up if multiple show up under the exact same weight
+        return winners.join(', ');
     }
 
     function runCoreEngine() {
@@ -369,10 +370,10 @@
 
         let mainTag = document.getElementById('p-main-tag');
         if (decisions.main !== "--") {
-            mainTag.innerText = "🎯 Optimized Filter Selection Target";
+            mainTag.innerText = "🎯 Hottest Neighbor Target Selection";
             mainTag.style.color = "var(--green)";
         } else {
-            mainTag.innerText = "Awaiting Multi-Instance Match Pattern...";
+            mainTag.innerText = "Awaiting Neighbor History Instancing...";
             mainTag.style.color = "var(--accent)";
         }
 
