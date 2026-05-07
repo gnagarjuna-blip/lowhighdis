@@ -3,83 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Roulette Master - Dual Sector Engine</title>
+    <title>Roulette Engine - Progression Mastery</title>
     <style>
-        :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; --orange: #f97316; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .dashboard { max-width: 1550px; margin: 0 auto; display: grid; grid-template-columns: 1fr 420px; gap: 20px; }
-        .setup-panel { background: var(--panel); border: 1px solid #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; grid-column: 1 / -1; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .textarea-input { width: 100%; height: 70px; background: #05070f; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; font-size: 1rem; box-sizing: border-box; resize: none; }
-        .controls { display: flex; gap: 15px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--panel); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #1e293b; }
-        .stat-val { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
-        .label-stat { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
-        .hero { background: linear-gradient(145deg, #1e293b, #010206); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: center; }
-        .hero-section { border-right: 1px solid #1e293b; padding: 0 10px; }
-        .hero-section:last-child { border-right: none; }
-        .predict-title { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
-        .predict-val { font-size: 1.4rem; font-weight: 900; color: var(--gold); margin-top: 5px; }
-        .chart-box { background: var(--panel); border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .canvas-container { position: relative; width: 100%; height: 160px; background: #010206; border-radius: 8px; overflow: hidden; }
-        .roulette-container { background: #064e3b; padding: 15px; border-radius: 12px; border: 4px solid #065f46; display: flex; margin-bottom: 20px; }
-        .zero-cell { width: 55px; background: var(--green); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
-        .grid-rows { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; margin-left: 4px; }
-        .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
-        .grid-cell { height: 48px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); font-size: 1.15rem; }
-        .r-num { background: var(--red); color: white; }
-        .b-num { background: var(--black); color: white; }
-        .panel { background: var(--panel); border-radius: 12px; padding: 20px; border: 1px solid #1e293b; }
-        .log-area { height: 480px; overflow-y: auto; background: #05070f; border-radius: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #0b111e; padding: 12px; position: sticky; top: 0; color: var(--accent); border-bottom: 2px solid #1e293b; }
-        td { padding: 11px; text-align: center; border-bottom: 1px solid #0b111e; }
-        .btn { padding: 11px 22px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--accent); color: #05070f; }
-        .btn-danger { background: var(--red); color: white; }
-        .btn-success { background: var(--green); color: white; }
-        .win-text { color: var(--green); font-weight: bold; }
-        .loss-text { color: var(--red); font-weight: bold; }
+        :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        .dashboard { max-width: 1550px; margin: 0 auto; display: grid; grid-template-columns: 1fr 420px; gap: 15px; }
+        
+        /* New Progression Panel */
+        .progression-bar { 
+            grid-column: 1 / -1; 
+            background: linear-gradient(90deg, #1e293b, #0b111e); 
+            padding: 15px; border-radius: 12px; 
+            display: flex; gap: 20px; align-items: center; 
+            border: 1px solid var(--accent);
+        }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 0.7rem; text-transform: uppercase; color: var(--accent); font-weight: bold; }
+        .small-input { background: #05070f; border: 1px solid #334155; color: white; padding: 5px; border-radius: 4px; width: 80px; }
+
+        .setup-panel { background: var(--panel); border: 1px solid #1e293b; padding: 15px; border-radius: 12px; grid-column: 1 / -1; }
+        .textarea-input { width: 100%; height: 60px; background: #05070f; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; resize: none; }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 15px 0; }
+        .stat-card { background: var(--panel); padding: 12px; border-radius: 10px; text-align: center; border: 1px solid #1e293b; }
+        .stat-val { display: block; font-size: 1.5rem; font-weight: 800; }
+        .label-stat { font-size: 0.65rem; opacity: 0.7; text-transform: uppercase; }
+
+        .hero { background: #0b111e; border: 2px solid var(--gold); border-radius: 15px; padding: 20px; text-align: center; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .predict-val { font-size: 1.3rem; font-weight: 900; color: var(--gold); }
+        .unit-display { font-size: 2rem; color: var(--accent); font-weight: 900; }
+
+        .roulette-container { background: #064e3b; padding: 10px; border-radius: 12px; display: flex; border: 3px solid #065f46; }
+        .zero-cell { width: 50px; background: var(--green); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+        .grid-rows { display: flex; flex-direction: column; gap: 3px; flex-grow: 1; margin-left: 3px; }
+        .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+        .grid-cell { height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; border-radius: 3px; font-size: 0.9rem; }
+        .r-num { background: var(--red); }
+        .b-num { background: var(--black); }
+
+        .log-area { height: 450px; overflow-y: auto; background: #05070f; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: #1e293b; padding: 10px; color: var(--accent); position: sticky; top: 0; }
+        td { padding: 8px; border-bottom: 1px solid #1e293b; text-align: center; }
+        
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-blue { background: var(--accent); color: #000; }
+        .btn-green { background: var(--green); color: #fff; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
+    <div class="progression-bar">
+        <div class="input-group">
+            <label>Bankroll</label>
+            <input type="number" id="cfg-bankroll" class="small-input" value="1000">
+        </div>
+        <div class="input-group">
+            <label>Base Unit</label>
+            <input type="number" id="cfg-unit" class="small-input" value="10">
+        </div>
+        <div class="input-group">
+            <label>Max Win Strk</label>
+            <input type="number" id="cfg-maxwin" class="small-input" value="5">
+        </div>
+        <div class="input-group">
+            <label>Max Loss Strk</label>
+            <input type="number" id="cfg-maxloss" class="small-input" value="8">
+        </div>
+        <div style="flex-grow:1; text-align:right;">
+            <span class="label-stat">Current Target Bet:</span>
+            <span id="next-unit-display" class="unit-display">10</span>
+        </div>
+    </div>
+
     <div class="setup-panel">
-        <h2 style="margin:0 0 10px 0; font-size: 1.1rem; color: var(--accent);">ROULETTE DUAL-STREET COLLECTIVE ENGINE</h2>
-        <textarea id="bulkData" class="textarea-input" placeholder="Paste sequential numbers here..."></textarea>
-        <div class="controls">
-            <button class="btn" onclick="processData(false)">Seed Numbers Only</button>
-            <button class="btn btn-success" onclick="processData(true)">Run Auto Prediction Simulation</button>
+        <textarea id="bulkData" class="textarea-input" placeholder="Paste data for simulation..."></textarea>
+        <div style="margin-top:10px; display:flex; gap:10px;">
+            <button class="btn btn-blue" onclick="processData(false)">Seed History</button>
+            <button class="btn btn-green" onclick="processData(true)">Run Sim with Progression</button>
         </div>
     </div>
 
     <div>
         <div class="stats-row">
-            <div class="stat-card"><span class="label-stat">Spins</span><span id="s-cnt" class="stat-val">0</span></div>
-            <div class="stat-card"><span class="label-stat">Wins</span><span id="s-win" class="stat-val" style="color:var(--green)">0</span></div>
-            <div class="stat-card"><span class="label-stat">Losses</span><span id="s-loss" class="stat-val" style="color:var(--red)">0</span></div>
-            <div class="stat-card"><span class="label-stat">Max Loss Streak</span><span id="s-max-loss" class="stat-val" style="color:var(--gold)">0</span></div>
+            <div class="stat-card"><span class="label-stat">Bankroll</span><span id="s-bank" class="stat-val">1000</span></div>
+            <div class="stat-card" style="border-color: var(--green);"><span class="label-stat">Profit</span><span id="s-profit" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label-stat">Wins</span><span id="s-win" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label-stat">Losses</span><span id="s-loss" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="label-stat">Current Streak</span><span id="s-streak" class="stat-val">0</span></div>
         </div>
 
         <div class="hero">
-            <div class="hero-section">
-                <div class="predict-title">Best Low Street</div>
-                <div id="p-under" class="predict-val" style="color:var(--accent)">--</div>
-            </div>
-            <div class="hero-section">
-                <div class="predict-title">Best High Street</div>
-                <div id="p-over" class="predict-val" style="color:var(--orange)">--</div>
-            </div>
-            <div class="hero-section">
-                <div class="predict-title">Suggested Bet</div>
-                <div id="p-main" class="predict-val">--</div>
-            </div>
-        </div>
-
-        <div class="chart-box">
-            <div class="canvas-container">
-                <canvas id="travelChart"></canvas>
-            </div>
+            <div><div class="predict-title">Low DS</div><div id="p-under" class="predict-val">--</div></div>
+            <div><div class="predict-title">High DS</div><div id="p-over" class="predict-val">--</div></div>
+            <div><div class="predict-title">Combined Bet</div><div id="p-main" class="predict-val">--</div></div>
         </div>
 
         <div class="roulette-container">
@@ -88,185 +106,159 @@
         </div>
     </div>
 
-    <div class="panel">
-        <h2 style="margin:0 0 15px 0; font-size: 1rem; color: var(--accent);">LIVE DATA MATRIX</h2>
+    <div class="panel" style="background: var(--panel); padding:15px; border-radius:12px;">
+        <h3 style="margin-top:0; color:var(--accent);">SESSION LOG</h3>
         <div class="log-area">
-            <table>
+            <table id="logTable">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Num</th>
-                        <th>Low</th>
-                        <th>High</th>
+                        <th>Bet</th>
+                        <th>Unit</th>
                         <th>Result</th>
                     </tr>
                 </thead>
-                <tbody id="logTable"></tbody>
+                <tbody></tbody>
             </table>
         </div>
-        <button class="btn btn-danger" style="width:100%; margin-top:15px;" onclick="resetAll()">RESET ALL</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:10px; background:var(--red); color:white;" onclick="resetAll()">RESET ALL</button>
     </div>
 </div>
 
 <script>
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
-    let rawNumbers = [];
-    let trackedPredictions = [];
-    let totalWins = 0, totalLosses = 0, maxLossStreak = 0, currentLossStreak = 0;
-
     const doubleStreets = [
-        { name: "1st DS", nums: [1,2,3,4,5,6], zone: 'low' }, 
-        { name: "2nd DS", nums: [7,8,9,10,11,12], zone: 'low' },
-        { name: "3rd DS", nums: [13,14,15,16,17,18], zone: 'low' }, 
-        { name: "4th DS", nums: [19,20,21,22,23,24], zone: 'high' },
-        { name: "5th DS", nums: [25,26,27,28,29,30], zone: 'high' }, 
-        { name: "6th DS", nums: [31,32,33,34,35,36], zone: 'high' }
+        { name: "1st DS", nums: [1,2,3,4,5,6], zone: 'low' }, { name: "2nd DS", nums: [7,8,9,10,11,12], zone: 'low' },
+        { name: "3rd DS", nums: [13,14,15,16,17,18], zone: 'low' }, { name: "4th DS", nums: [19,20,21,22,23,24], zone: 'high' },
+        { name: "5th DS", nums: [25,26,27,28,29,30], zone: 'high' }, { name: "6th DS", nums: [31,32,33,34,35,36], zone: 'high' }
     ];
 
-    function buildRouletteTable() {
+    let rawNumbers = [];
+    let trackedPredictions = [];
+    let stats = { bankroll: 0, initial: 0, unitSize: 0, currentUnit: 1, wins: 0, losses: 0, streak: 0 };
+
+    function buildTable() {
         const grid = document.getElementById('rouletteGrid');
-        const structure = [
-            [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
-            [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
-            [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
-        ];
-        structure.forEach(rowNums => {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'grid-row';
-            rowNums.forEach(num => {
-                const cell = document.createElement('div');
-                cell.className = `grid-cell ${reds.includes(num) ? 'r-num' : 'b-num'}`;
-                cell.innerText = num;
-                cell.onclick = () => addSingleSpin(num);
-                rowDiv.appendChild(cell);
+        const layout = [[3,6,9,12,15,18,21,24,27,30,33,36],[2,5,8,11,14,17,20,23,26,29,32,35],[1,4,7,10,13,16,19,22,25,28,31,34]];
+        layout.forEach(r => {
+            const rowDiv = document.createElement('div'); rowDiv.className = 'grid-row';
+            r.forEach(n => {
+                const c = document.createElement('div');
+                c.className = `grid-cell ${reds.includes(n)?'r-num':'b-num'}`;
+                c.innerText = n; c.onclick = () => addSingleSpin(n);
+                rowDiv.appendChild(c);
             });
             grid.appendChild(rowDiv);
         });
     }
 
-    function checkLayoutHit(predStr, num) {
-        if (!predStr || predStr === "--") return false;
-        const parts = predStr.split(' + ');
-        return parts.some(p => {
-            const ds = doubleStreets.find(d => d.name === p.trim());
-            return ds && ds.nums.includes(Number(num));
-        });
+    function addSingleSpin(num) {
+        if (rawNumbers.length === 0) stats.initial = parseFloat(document.getElementById('cfg-bankroll').value);
+        
+        let evalStatus = "-";
+        let earned = 0;
+        let currentBetAmount = stats.currentUnit * parseFloat(document.getElementById('cfg-unit').value);
+
+        if (trackedPredictions.length > 0) {
+            const last = trackedPredictions[trackedPredictions.length - 1];
+            if (last.main !== "--") {
+                const hit = last.main.split(' + ').some(p => doubleStreets.find(d => d.name === p).nums.includes(num));
+                
+                if (hit) {
+                    evalStatus = "WIN";
+                    stats.wins++;
+                    earned = currentBetAmount * 3; // Double street pays 5:1, but we play 2, so net is roughly this
+                    // Progression: Win = Decrease 2 Units
+                    stats.currentUnit = Math.max(1, stats.currentUnit - 2);
+                    stats.streak = stats.streak > 0 ? stats.streak + 1 : 1;
+                } else {
+                    evalStatus = "LOSS";
+                    stats.losses++;
+                    earned = 0;
+                    // Progression: Loss = Increase 1 Unit
+                    stats.currentUnit += 1;
+                    stats.streak = stats.streak < 0 ? stats.streak - 1 : -1;
+                }
+                stats.bankroll += (earned - (currentBetAmount * 2)); // Subtract cost of 2 DS bets
+            }
+        }
+
+        rawNumbers.push(num);
+        const pred = getPrediction();
+        trackedPredictions.push({ ...pred, eval: evalStatus, unit: stats.currentUnit, bet: currentBetAmount });
+        updateUI();
     }
 
-    function computeDualStreetPrediction() {
+    function getPrediction() {
         if (rawNumbers.length < 2) return { main: "--", over: "--", under: "--" };
-        const lastNum = rawNumbers[rawNumbers.length - 1];
+        const last = rawNumbers[rawNumbers.length - 1];
         let neighbors = [];
         for (let i = 0; i < rawNumbers.length - 1; i++) {
-            if (rawNumbers[i] === lastNum) {
+            if (rawNumbers[i] === last) {
                 if (i > 0) neighbors.push(rawNumbers[i - 1]);
                 neighbors.push(rawNumbers[i + 1]);
             }
         }
         if (neighbors.length === 0) return { main: "--", over: "--", under: "--" };
 
-        const lowBest = doubleStreets.filter(d => d.zone === 'low')
-            .map(d => ({ name: d.name, hits: neighbors.filter(n => d.nums.includes(n)).length }))
-            .sort((a, b) => b.hits - a.hits)[0].name;
+        const low = doubleStreets.filter(d => d.zone === 'low')
+            .map(d => ({ n: d.name, h: neighbors.filter(x => d.nums.includes(x)).length }))
+            .sort((a,b) => b.h - a.h)[0].n;
+        const high = doubleStreets.filter(d => d.zone === 'high')
+            .map(d => ({ n: d.name, h: neighbors.filter(x => d.nums.includes(x)).length }))
+            .sort((a,b) => b.h - a.h)[0].n;
 
-        const highBest = doubleStreets.filter(d => d.zone === 'high')
-            .map(d => ({ name: d.name, hits: neighbors.filter(n => d.nums.includes(n)).length }))
-            .sort((a, b) => b.hits - a.hits)[0].name;
-
-        return { under: lowBest, over: highBest, main: `${lowBest} + ${highBest}` };
-    }
-
-    function processData(simulation = false) {
-        const val = document.getElementById('bulkData').value.trim();
-        if (!val) return alert("Enter data first.");
-        const nums = val.split(/[\s,]+/).map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
-        
-        resetAll();
-        
-        if (!simulation) {
-            rawNumbers = nums;
-            trackedPredictions = rawNumbers.map(() => ({ main: "--", over: "--", under: "--", eval: "-" }));
-        } else {
-            nums.forEach(n => addSingleSpin(n));
-        }
-        updateUI();
-        renderVisualChart();
-    }
-
-    function addSingleSpin(num) {
-        let evalStatus = "-";
-        if (trackedPredictions.length > 0) {
-            const last = trackedPredictions[trackedPredictions.length - 1];
-            if (last.main !== "--") {
-                if (checkLayoutHit(last.main, num)) {
-                    totalWins++; currentLossStreak = 0; evalStatus = "WIN";
-                } else {
-                    totalLosses++; currentLossStreak++; evalStatus = "LOSS";
-                }
-                maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
-            }
-        }
-        rawNumbers.push(num);
-        const pred = computeDualStreetPrediction();
-        trackedPredictions.push({ ...pred, eval: evalStatus });
-        updateUI();
-        renderVisualChart();
+        return { under: low, over: high, main: `${low} + ${high}` };
     }
 
     function updateUI() {
-        document.getElementById('s-cnt').innerText = rawNumbers.length;
-        document.getElementById('s-win').innerText = totalWins;
-        document.getElementById('s-loss').innerText = totalLosses;
-        document.getElementById('s-max-loss').innerText = maxLossStreak;
+        document.getElementById('s-bank').innerText = (parseFloat(document.getElementById('cfg-bankroll').value) + (stats.bankroll)).toFixed(0);
+        document.getElementById('s-profit').innerText = stats.bankroll.toFixed(0);
+        document.getElementById('s-win').innerText = stats.wins;
+        document.getElementById('s-loss').innerText = stats.losses;
+        document.getElementById('s-streak').innerText = stats.streak;
+        document.getElementById('next-unit-display').innerText = stats.currentUnit;
 
-        const latest = trackedPredictions[trackedPredictions.length - 1];
-        if (latest) {
-            document.getElementById('p-under').innerText = latest.under;
-            document.getElementById('p-over').innerText = latest.over;
-            document.getElementById('p-main').innerText = latest.main;
+        const last = trackedPredictions[trackedPredictions.length - 1];
+        if(last) {
+            document.getElementById('p-under').innerText = last.under;
+            document.getElementById('p-over').innerText = last.over;
+            document.getElementById('p-main').innerText = last.main;
         }
 
-        const tbody = document.getElementById('logTable');
+        const tbody = document.querySelector('#logTable tbody');
         tbody.innerHTML = '';
-        for (let i = rawNumbers.length - 1; i >= 0; i--) {
-            const p = trackedPredictions[i];
-            const color = rawNumbers[i] === 0 ? 'var(--green)' : (reds.includes(rawNumbers[i]) ? 'var(--red)' : 'white');
+        trackedPredictions.slice(-50).reverse().forEach((p, i) => {
+            const idx = trackedPredictions.length - i;
             tbody.innerHTML += `<tr>
-                <td>${i + 1}</td>
-                <td style="font-weight:bold; color:${color}">${rawNumbers[i]}</td>
-                <td>${p.under || '-'}</td>
-                <td>${p.over || '-'}</td>
-                <td class="${p.eval === 'WIN' ? 'win-text' : 'loss-text'}">${p.eval}</td>
+                <td>${idx}</td>
+                <td style="color:${reds.includes(rawNumbers[idx-1])?'var(--red)':'white'}">${rawNumbers[idx-1]}</td>
+                <td>${p.main}</td>
+                <td>${p.unit}u</td>
+                <td style="color:${p.eval==='WIN'?'var(--green)':'var(--red)'}">${p.eval}</td>
             </tr>`;
-        }
-    }
-
-    function renderVisualChart() {
-        const canvas = document.getElementById('travelChart');
-        const ctx = canvas.getContext('2d');
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = 160;
-        if (rawNumbers.length < 2) return;
-        const pts = rawNumbers.slice(-20);
-        const step = canvas.width / (pts.length - 1);
-        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.beginPath();
-        pts.forEach((n, i) => {
-            const x = i * step; const y = 160 - (n / 36 * 140) - 10;
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
-        ctx.stroke();
     }
 
-    function resetAll() {
-        rawNumbers = []; trackedPredictions = []; totalWins = 0; totalLosses = 0; maxLossStreak = 0; currentLossStreak = 0;
-        document.getElementById('logTable').innerHTML = '';
-        document.getElementById('p-under').innerText = '--';
-        document.getElementById('p-over').innerText = '--';
-        document.getElementById('p-main').innerText = '--';
+    function processData(sim) {
+        const raw = document.getElementById('bulkData').value.split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
+        resetAll();
+        if(!sim) {
+            raw.forEach(n => { rawNumbers.push(n); trackedPredictions.push({ ...getPrediction(), eval: '-', unit: 1 }); });
+        } else {
+            raw.forEach(n => addSingleSpin(n));
+        }
         updateUI();
     }
 
-    buildRouletteTable();
+    function resetAll() {
+        rawNumbers = []; trackedPredictions = []; 
+        stats = { bankroll: 0, initial: parseFloat(document.getElementById('cfg-bankroll').value), currentUnit: 1, wins: 0, losses: 0, streak: 0 };
+        updateUI();
+    }
+
+    buildTable();
 </script>
 </body>
 </html>
