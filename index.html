@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette DS - Dual Direction Tracker</title>
+    <title>Roulette DS - Cluster Window Engine</title>
     <style>
         :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
@@ -12,11 +12,11 @@
         .setup-panel { background: var(--panel); border: 1px solid #1e293b; padding: 20px; border-radius: 12px; grid-column: 1 / -1; }
         .textarea-input { width: 100%; height: 80px; background: #05070f; border: 1px solid #334155; border-radius: 6px; color: white; padding: 10px; resize: none; font-size: 1.1rem; box-sizing: border-box;}
         
-        .prediction-hero { background: linear-gradient(145deg, #0b111e, #16213e); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; }
+        .prediction-hero { background: linear-gradient(145deg, #0b111e, #1c2538); border: 2px solid var(--accent); border-radius: 15px; padding: 25px; text-align: center; margin-bottom: 20px; }
         .ds-display { display: flex; justify-content: center; gap: 30px; margin-top: 15px; }
-        .ds-card { background: #05070f; padding: 20px; border-radius: 12px; border: 1px solid var(--accent); min-width: 160px; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2); }
+        .ds-card { background: #05070f; padding: 20px; border-radius: 12px; border: 1px solid var(--accent); min-width: 160px; }
         .ds-label { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; font-weight: bold; }
-        .ds-value { font-size: 2.8rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+        .ds-value { font-size: 2.8rem; font-weight: 800; color: var(--gold); }
 
         .roulette-container { background: #064e3b; padding: 15px; border-radius: 12px; display: flex; border: 4px solid #065f46; margin-bottom: 20px; }
         .zero-cell { width: 60px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
@@ -28,30 +28,29 @@
 
         .log-area { height: 400px; overflow-y: auto; background: #05070f; border-radius: 8px; border: 1px solid #1e293b; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #1e293b; padding: 12px; color: var(--accent); font-size: 0.7rem; position: sticky; top: 0; text-transform: uppercase; }
+        th { background: #1e293b; padding: 12px; color: var(--accent); font-size: 0.7rem; position: sticky; top: 0; }
         td { padding: 10px; border-bottom: 1px solid #1e293b; text-align: center; font-size: 0.8rem; }
         
-        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn:hover { opacity: 0.8; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-blue { background: var(--accent); color: #000; }
         .btn-red { background: var(--red); color: #fff; width: 100%; margin-top: 10px; }
-        .tag { font-size: 0.65rem; padding: 2px 5px; border-radius: 3px; background: #334155; margin: 0 2px; }
+        .highlight-text { color: var(--gold); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
     <div class="setup-panel">
-        <h2 style="margin:0 0 10px 0; font-size: 0.9rem; color: var(--accent);">STEP 1: FEED DATA HISTORY</h2>
-        <textarea id="bulkData" class="textarea-input" placeholder="Paste historical numbers here..."></textarea>
+        <h2 style="margin:0 0 10px 0; font-size: 0.9rem; color: var(--accent);">INPUT HISTORY STREAM</h2>
+        <textarea id="bulkData" class="textarea-input" placeholder="Example: 12 13 26 23 4 10 29 12 28 20..."></textarea>
         <div style="margin-top:10px;">
-            <button class="btn btn-blue" onclick="syncHistory()">SYNC DATA ENGINE</button>
+            <button class="btn btn-blue" onclick="syncHistory()">SYNC DATA</button>
         </div>
     </div>
 
     <div>
         <div class="prediction-hero">
-            <h3 style="margin:0; font-size: 0.8rem; letter-spacing: 3px; color: #94a3b8;">STREET PREDICTION (4 BACK / 4 FORTH)</h3>
+            <h3 style="margin:0; font-size: 0.8rem; letter-spacing: 2px; color: #94a3b8;">CLUSTER WINDOW PREDICTION (±4)</h3>
             <div class="ds-display">
                 <div class="ds-card">
                     <div class="ds-label">Low DS (1-3)</div>
@@ -62,7 +61,7 @@
                     <div id="high-ds" class="ds-value">--</div>
                 </div>
             </div>
-            <p id="status-msg" style="margin-top:15px; font-size: 0.8rem; color: var(--accent);">Awaiting Pivot Number...</p>
+            <p id="status-msg" style="margin-top:15px; font-size: 0.8rem; color: var(--accent);">Enter Pivot Number</p>
         </div>
 
         <div class="roulette-container">
@@ -72,20 +71,20 @@
     </div>
 
     <div class="panel" style="background: var(--panel); padding:20px; border-radius:12px; border: 1px solid #1e293b;">
-        <h3 style="margin-top:0; color:var(--accent); font-size: 0.9rem; text-align: center;">ANALYTICS LOG</h3>
+        <h3 style="margin-top:0; color:var(--accent); font-size: 0.9rem;">CLUSTER ANALYSIS LOG</h3>
         <div class="log-area">
             <table>
                 <thead>
                     <tr>
                         <th>Pivot</th>
-                        <th>Samples (Back/Forth)</th>
-                        <th>Result</th>
+                        <th>Surrounding Window</th>
+                        <th>Low/High</th>
                     </tr>
                 </thead>
                 <tbody id="logBody"></tbody>
             </table>
         </div>
-        <button class="btn btn-red" onclick="resetAll()">RESET ENGINE</button>
+        <button class="btn btn-red" onclick="resetAll()">RESET ALL</button>
     </div>
 </div>
 
@@ -132,47 +131,45 @@
         if (history.length < 2) return;
         
         const pivot = history[history.length - 1];
-        let backSamples = [];
-        let forthSamples = [];
+        let clusterWindow = [];
+        let foundIndex = -1;
 
-        // Scan backwards starting from the second to last number
+        // Search for the previous occurrence of this pivot
         for (let i = history.length - 2; i >= 0; i--) {
             if (history[i] === pivot) {
-                // Back result (the number that came before this instance)
-                if (i > 0 && backSamples.length < 4) {
-                    backSamples.push(history[i-1]);
-                }
-                // Forth result (the number that came after this instance)
-                if (i < history.length - 1 && forthSamples.length < 4) {
-                    // Check if it's not the very last pivot we just clicked
-                    if (i + 1 < history.length - 1) {
-                        forthSamples.push(history[i+1]);
-                    }
-                }
+                foundIndex = i;
+                break; // Found the most recent instance in history
             }
-            if (backSamples.length === 4 && forthSamples.length === 4) break;
         }
 
-        const totalTracked = [...backSamples, ...forthSamples];
-        if (totalTracked.length === 0) {
-            document.getElementById('status-msg').innerText = `Pivot ${pivot} has no surrounding patterns.`;
+        if (foundIndex === -1) {
+            document.getElementById('status-msg').innerText = `Pivot [${pivot}] is new to history.`;
             return;
         }
 
-        const dsList = totalTracked.map(n => getDS(n)).filter(d => d !== null);
-        
+        // Collect the window: 4 before and 4 after the foundIndex
+        let windowNumbers = [];
+        for (let j = foundIndex - 4; j <= foundIndex + 4; j++) {
+            if (j >= 0 && j < history.length - 1) { // Stay within bounds, exclude current entry
+                if (j !== foundIndex) { // Exclude the pivot itself from the DS count
+                    windowNumbers.push(history[j]);
+                }
+            }
+        }
+
+        const dsList = windowNumbers.map(n => getDS(n)).filter(d => d !== null);
         const lowList = dsList.filter(d => d <= 3);
         const highList = dsList.filter(d => d >= 4);
 
         const bestLow = getMostFrequent(lowList);
         const bestHigh = getMostFrequent(highList);
 
-        // Update UI
+        // UI Update
         document.getElementById('low-ds').innerText = bestLow || '--';
         document.getElementById('high-ds').innerText = bestHigh || '--';
-        document.getElementById('status-msg').innerText = `Analyzed ${backSamples.length} Back & ${forthSamples.length} Forth instances of ${pivot}`;
+        document.getElementById('status-msg').innerText = `Found cluster around ${pivot} at position ${foundIndex + 1}`;
 
-        updateLog(pivot, backSamples, forthSamples, bestLow, bestHigh);
+        updateLog(pivot, windowNumbers, bestLow, bestHigh);
     }
 
     function getMostFrequent(arr) {
@@ -186,23 +183,17 @@
             if (counts[val] > maxCount) {
                 maxCount = counts[val];
                 result = val;
-            } else if (counts[val] === maxCount) {
-                // Tie-breaker: pick the one that appeared more recently in the sample array
-                result = val; 
             }
         }
         return result;
     }
 
-    function updateLog(pivot, back, forth, low, high) {
+    function updateLog(pivot, windowArr, low, high) {
         const tbody = document.getElementById('logBody');
         const row = `<tr>
-            <td style="font-weight:bold; color:var(--accent)">${pivot}</td>
-            <td>
-                <span class="tag">B: ${back.join(',') || '-'}</span><br>
-                <span class="tag">F: ${forth.join(',') || '-'}</span>
-            </td>
-            <td style="color:var(--gold); font-weight:bold;">L${low || '-'} / H${high || '-'}</td>
+            <td class="highlight-text">${pivot}</td>
+            <td style="font-size:0.75rem; color:#94a3b8">${windowArr.join(' → ')}</td>
+            <td class="highlight-text">L${low || '-'} / H${high || '-'}</td>
         </tr>`;
         tbody.insertAdjacentHTML('afterbegin', row);
     }
@@ -213,7 +204,7 @@
         document.getElementById('low-ds').innerText = '--';
         document.getElementById('high-ds').innerText = '--';
         document.getElementById('logBody').innerHTML = '';
-        document.getElementById('status-msg').innerText = 'Engine Reset';
+        document.getElementById('status-msg').innerText = 'System Reset';
     }
 
     buildGrid();
