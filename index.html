@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette DS - Guaranteed Dual Bets</title>
+    <title>Roulette DS - Corrected Progression Timing</title>
     <style>
         :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
@@ -42,6 +42,7 @@
         th { background: #1e293b; padding: 12px; color: var(--accent); font-size: 0.75rem; }
         td { padding: 10px; border-bottom: 1px solid #1e293b; text-align: center; font-size: 0.85rem; }
         .win-row { background: rgba(16, 185, 129, 0.15); color: var(--green); font-weight: bold; }
+        .loss-row { color: var(--red); }
     </style>
 </head>
 <body>
@@ -83,11 +84,11 @@
     </div>
 
     <div class="panel" style="background: var(--panel); padding:15px; border-radius:12px; border: 1px solid #1e293b;">
-        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">DUAL DS LOG</h3>
+        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">SESSION PROGRESSION</h3>
         <div class="log-area">
             <table id="sessionLog">
                 <thead>
-                    <tr><th>Hit</th><th>L-Play</th><th>H-Play</th><th>Result</th></tr>
+                    <tr><th>Hit</th><th>Result</th><th>Low Unit</th><th>High Unit</th></tr>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -121,16 +122,44 @@
 
     function addNumber(n) {
         const hitDS = getDS(n);
+        const base = parseInt(document.getElementById('baseUnit').value);
+        let logResult = "No Bet";
+        let winClass = "";
+
+        // 1. Evaluate "Current" predictions against the "New" number
         if (currentPreds.lows.length > 0) {
             const lowSideWon = currentPreds.lows.includes(hitDS?.toString());
-            if (lowSideWon) sideUnits.low = Math.max(1, sideUnits.low - 1);
-            else sideUnits.low += 1;
+            if (lowSideWon) {
+                sideUnits.low = Math.max(1, sideUnits.low - 1);
+                logResult = "WIN (Low)";
+                winClass = "win-row";
+            } else {
+                sideUnits.low += 1;
+                logResult = "LOSS (Low)";
+                winClass = "loss-row";
+            }
         }
+
         if (currentPreds.highs.length > 0) {
             const highSideWon = currentPreds.highs.includes(hitDS?.toString());
-            if (highSideWon) sideUnits.high = Math.max(1, sideUnits.high - 1);
-            else sideUnits.high += 1;
+            if (highSideWon) {
+                sideUnits.high = Math.max(1, sideUnits.high - 1);
+                logResult = "WIN (High)";
+                winClass = "win-row";
+            } else {
+                sideUnits.high += 1;
+                logResult = "LOSS (High)";
+                if (winClass !== "win-row") winClass = "loss-row";
+            }
         }
+
+        // 2. Log entry with units BEFORE new calculation
+        const log = document.querySelector('#sessionLog tbody');
+        log.insertAdjacentHTML('afterbegin', `<tr class="${winClass}">
+            <td>${n}</td><td>${logResult}</td><td>${sideUnits.low * base}</td><td>${sideUnits.high * base}</td>
+        </tr>`);
+
+        // 3. Update history and find NEXT predictions
         history.push(n);
         document.getElementById('bulkData').value = history.join(' ');
         processLogic();
@@ -158,8 +187,6 @@
         }
 
         const dss = winNums.map(n => getDS(n)).filter(d => d !== null);
-        
-        // GUARANTEED TWO DS PER SIDE
         currentPreds.lows = getTopTwoGuaranteed(dss.filter(d => d <= 3), [1, 2, 3]);
         currentPreds.highs = getTopTwoGuaranteed(dss.filter(d => d >= 4), [4, 5, 6]);
 
@@ -169,15 +196,10 @@
     function getTopTwoGuaranteed(arr, possibleDS) {
         const counts = {};
         arr.forEach(v => counts[v] = (counts[v] || 0) + 1);
-        
         let sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-        
-        // If we don't have 2 DS from history, fill with the remaining options from that side
         if (sorted.length < 2) {
             possibleDS.forEach(ds => {
-                if (!sorted.includes(ds.toString()) && sorted.length < 2) {
-                    sorted.push(ds.toString());
-                }
+                if (!sorted.includes(ds.toString()) && sorted.length < 2) sorted.push(ds.toString());
             });
         }
         return sorted.slice(0, 2);
@@ -199,15 +221,6 @@
             const chip = document.getElementById(`chip-ds${ds}`);
             if (chip) { chip.style.display = 'flex'; chip.innerText = sideUnits.high * base; }
         });
-
-        const log = document.querySelector('#sessionLog tbody');
-        const lastNum = history[history.length - 1];
-        const hitDS = getDS(lastNum);
-        const isWin = currentPreds.lows.includes(hitDS?.toString()) || currentPreds.highs.includes(hitDS?.toString());
-
-        log.insertAdjacentHTML('afterbegin', `<tr class="${isWin ? 'win-row' : ''}">
-            <td>${lastNum}</td><td>${currentPreds.lows.join(',')}</td><td>${currentPreds.highs.join(',')}</td>
-            <td>${isWin ? 'WIN' : 'LOSS'}</td></tr>`);
     }
 
     function resetAll() {
