@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette DS - True Side Progression</title>
+    <title>Roulette DS - Guaranteed Dual Bets</title>
     <style>
         :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
@@ -30,10 +30,9 @@
         .r-num { background: var(--red); }
         .b-num { background: var(--black); }
 
-        /* Chip positions strictly on the middle lines of each DS */
         .chip { 
-            position: absolute; width: 34px; height: 34px; background: var(--gold); border: 2px dashed #000; 
-            border-radius: 50%; color: #000; font-size: 0.8rem; font-weight: 900; 
+            position: absolute; width: 36px; height: 36px; background: var(--gold); border: 2px solid #000; 
+            border-radius: 50%; color: #000; font-size: 0.85rem; font-weight: 900; 
             display: none; align-items: center; justify-content: center; 
             z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transform: translate(-50%, -50%);
         }
@@ -71,13 +70,12 @@
         </div>
 
         <div class="roulette-container" id="tableWrapper">
-            <div id="chip-ds1" class="chip" style="left: calc(64px + (100% - 104px) * 0.0833); top: 100%;">0</div>
-            <div id="chip-ds2" class="chip" style="left: calc(64px + (100% - 104px) * 0.25); top: 100%;">0</div>
-            <div id="chip-ds3" class="chip" style="left: calc(64px + (100% - 104px) * 0.4166); top: 100%;">0</div>
-            
-            <div id="chip-ds4" class="chip" style="left: calc(104px + (100% - 104px) * 0.5833); top: 100%;">0</div>
-            <div id="chip-ds5" class="chip" style="left: calc(104px + (100% - 104px) * 0.75); top: 100%;">0</div>
-            <div id="chip-ds6" class="chip" style="left: calc(104px + (100% - 104px) * 0.9166); top: 100%;">0</div>
+            <div id="chip-ds1" class="chip" style="left: calc(64px + (100% - 104px) * 0.0833); top: 100%;"></div>
+            <div id="chip-ds2" class="chip" style="left: calc(64px + (100% - 104px) * 0.25); top: 100%;"></div>
+            <div id="chip-ds3" class="chip" style="left: calc(64px + (100% - 104px) * 0.4166); top: 100%;"></div>
+            <div id="chip-ds4" class="chip" style="left: calc(104px + (100% - 104px) * 0.5833); top: 100%;"></div>
+            <div id="chip-ds5" class="chip" style="left: calc(104px + (100% - 104px) * 0.75); top: 100%;"></div>
+            <div id="chip-ds6" class="chip" style="left: calc(104px + (100% - 104px) * 0.9166); top: 100%;"></div>
 
             <div class="zero-cell" onclick="addNumber(0)">0</div>
             <div id="rouletteGrid" class="grid-rows"></div>
@@ -85,7 +83,7 @@
     </div>
 
     <div class="panel" style="background: var(--panel); padding:15px; border-radius:12px; border: 1px solid #1e293b;">
-        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">SIDE PROGRESSION LOG</h3>
+        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">DUAL DS LOG</h3>
         <div class="log-area">
             <table id="sessionLog">
                 <thead>
@@ -123,22 +121,16 @@
 
     function addNumber(n) {
         const hitDS = getDS(n);
-        
-        // --- LOGIC UPDATED TO YOUR REQUIREMENT ---
-        // If Low side was played: 
         if (currentPreds.lows.length > 0) {
             const lowSideWon = currentPreds.lows.includes(hitDS?.toString());
-            if (lowSideWon) sideUnits.low = Math.max(1, sideUnits.low - 1); // Win: Decrease side unit
-            else sideUnits.low += 1; // Loss: Increase side unit
+            if (lowSideWon) sideUnits.low = Math.max(1, sideUnits.low - 1);
+            else sideUnits.low += 1;
         }
-
-        // If High side was played:
         if (currentPreds.highs.length > 0) {
             const highSideWon = currentPreds.highs.includes(hitDS?.toString());
-            if (highSideWon) sideUnits.high = Math.max(1, sideUnits.high - 1); // Win: Decrease side unit
-            else sideUnits.high += 1; // Loss: Increase side unit
+            if (highSideWon) sideUnits.high = Math.max(1, sideUnits.high - 1);
+            else sideUnits.high += 1;
         }
-
         history.push(n);
         document.getElementById('bulkData').value = history.join(' ');
         processLogic();
@@ -160,39 +152,49 @@
         }
         if (foundIdx === -1) return;
 
-        let win = [];
+        let winNums = [];
         for (let j = foundIdx - 4; j <= foundIdx + 4; j++) {
-            if (j >= 0 && j < history.length - 1 && j !== foundIdx) win.push(history[j]);
+            if (j >= 0 && j < history.length - 1 && j !== foundIdx) winNums.push(history[j]);
         }
 
-        const dss = win.map(n => getDS(n)).filter(d => d !== null);
-        currentPreds.lows = getTop(dss.filter(d => d <= 3));
-        currentPreds.highs = getTop(dss.filter(d => d >= 4));
+        const dss = winNums.map(n => getDS(n)).filter(d => d !== null);
+        
+        // GUARANTEED TWO DS PER SIDE
+        currentPreds.lows = getTopTwoGuaranteed(dss.filter(d => d <= 3), [1, 2, 3]);
+        currentPreds.highs = getTopTwoGuaranteed(dss.filter(d => d >= 4), [4, 5, 6]);
 
         updateUI();
     }
 
-    function getTop(arr) {
+    function getTopTwoGuaranteed(arr, possibleDS) {
         const counts = {};
         arr.forEach(v => counts[v] = (counts[v] || 0) + 1);
-        return Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 2);
+        
+        let sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+        
+        // If we don't have 2 DS from history, fill with the remaining options from that side
+        if (sorted.length < 2) {
+            possibleDS.forEach(ds => {
+                if (!sorted.includes(ds.toString()) && sorted.length < 2) {
+                    sorted.push(ds.toString());
+                }
+            });
+        }
+        return sorted.slice(0, 2);
     }
 
     function updateUI() {
         const base = parseInt(document.getElementById('baseUnit').value);
-        
-        document.getElementById('low-ds').innerText = currentPreds.lows.length ? currentPreds.lows.join(' & ') : '--';
-        document.getElementById('high-ds').innerText = currentPreds.highs.length ? currentPreds.highs.join(' & ') : '--';
+        document.getElementById('low-ds').innerText = currentPreds.lows.join(' & ');
+        document.getElementById('high-ds').innerText = currentPreds.highs.join(' & ');
         document.getElementById('low-unit-display').innerText = `Unit: ${sideUnits.low * base}`;
         document.getElementById('high-unit-display').innerText = `Unit: ${sideUnits.high * base}`;
 
         document.querySelectorAll('.chip').forEach(c => c.style.display = 'none');
-
         currentPreds.lows.forEach(ds => {
             const chip = document.getElementById(`chip-ds${ds}`);
             if (chip) { chip.style.display = 'flex'; chip.innerText = sideUnits.low * base; }
         });
-
         currentPreds.highs.forEach(ds => {
             const chip = document.getElementById(`chip-ds${ds}`);
             if (chip) { chip.style.display = 'flex'; chip.innerText = sideUnits.high * base; }
@@ -204,7 +206,7 @@
         const isWin = currentPreds.lows.includes(hitDS?.toString()) || currentPreds.highs.includes(hitDS?.toString());
 
         log.insertAdjacentHTML('afterbegin', `<tr class="${isWin ? 'win-row' : ''}">
-            <td>${lastNum}</td><td>${currentPreds.lows.join(',') || '-'}</td><td>${currentPreds.highs.join(',') || '-'}</td>
+            <td>${lastNum}</td><td>${currentPreds.lows.join(',')}</td><td>${currentPreds.highs.join(',')}</td>
             <td>${isWin ? 'WIN' : 'LOSS'}</td></tr>`);
     }
 
