@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette DS - Shared Side Progression</title>
+    <title>Roulette DS - True Side Progression</title>
     <style>
         :root { --bg: #05070f; --panel: #0b111e; --accent: #38bdf8; --green: #10b981; --red: #ef4444; --black: #010206; --text: #f1f5f9; --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
@@ -18,19 +18,19 @@
         .low-zone { border-color: var(--accent); background: rgba(56, 189, 248, 0.05); }
         .high-zone { border-color: #f97316; background: rgba(249, 115, 22, 0.05); }
         .ds-value { font-size: 2rem; font-weight: 800; color: var(--gold); }
-        .unit-badge { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
+        .unit-badge { font-size: 0.9rem; font-weight: bold; color: var(--text); margin-top: 5px; background: #000; padding: 4px 10px; border-radius: 4px; display: inline-block; }
 
         .roulette-container { background: #064e3b; padding: 25px 20px; border-radius: 12px; display: flex; border: 4px solid #065f46; position: relative; margin-bottom: 20px; }
-        .zero-cell { width: 60px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; }
+        .zero-cell { width: 60px; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border-radius: 6px 0 0 6px; z-index: 5; }
         .grid-rows { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; margin-left: 4px; position: relative; }
         .grid-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
         
-        /* THE SECTOR GAP */
         .grid-row .grid-cell:nth-child(6) { margin-right: 40px; border-right: 2px dashed rgba(255,255,255,0.3); }
         .grid-cell { height: 55px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
         .r-num { background: var(--red); }
         .b-num { background: var(--black); }
 
+        /* Chip positions strictly on the middle lines of each DS */
         .chip { 
             position: absolute; width: 34px; height: 34px; background: var(--gold); border: 2px dashed #000; 
             border-radius: 50%; color: #000; font-size: 0.8rem; font-weight: 900; 
@@ -42,7 +42,7 @@
         table { width: 100%; border-collapse: collapse; }
         th { background: #1e293b; padding: 12px; color: var(--accent); font-size: 0.75rem; }
         td { padding: 10px; border-bottom: 1px solid #1e293b; text-align: center; font-size: 0.85rem; }
-        .win-row { background: rgba(16, 185, 129, 0.1); color: var(--green); font-weight: bold; }
+        .win-row { background: rgba(16, 185, 129, 0.15); color: var(--green); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -61,22 +61,23 @@
             <div class="ds-side-panel low-zone">
                 <div style="font-size:0.7rem; color:#94a3b8;">LOW (1-18)</div>
                 <div id="low-ds" class="ds-value">--</div>
-                <div id="low-unit-display" class="unit-badge">Current Unit: 1</div>
+                <div id="low-unit-display" class="unit-badge">Unit: 10</div>
             </div>
             <div class="ds-side-panel high-zone">
                 <div style="font-size:0.7rem; color:#94a3b8;">HIGH (19-36)</div>
                 <div id="high-ds" class="ds-value">--</div>
-                <div id="high-unit-display" class="unit-badge">Current Unit: 1</div>
+                <div id="high-unit-display" class="unit-badge">Unit: 10</div>
             </div>
         </div>
 
         <div class="roulette-container" id="tableWrapper">
-            <div id="chip-ds1" class="chip" style="left: calc(64px + 4% ); top: 100%;">0</div>
-            <div id="chip-ds2" class="chip" style="left: calc(64px + 12.5%); top: 100%;">0</div>
-            <div id="chip-ds3" class="chip" style="left: calc(64px + 21%); top: 100%;">0</div>
-            <div id="chip-ds4" class="chip" style="left: calc(104px + 36.5%); top: 100%;">0</div>
-            <div id="chip-ds5" class="chip" style="left: calc(104px + 45%); top: 100%;">0</div>
-            <div id="chip-ds6" class="chip" style="left: calc(104px + 53.5%); top: 100%;">0</div>
+            <div id="chip-ds1" class="chip" style="left: calc(64px + (100% - 104px) * 0.0833); top: 100%;">0</div>
+            <div id="chip-ds2" class="chip" style="left: calc(64px + (100% - 104px) * 0.25); top: 100%;">0</div>
+            <div id="chip-ds3" class="chip" style="left: calc(64px + (100% - 104px) * 0.4166); top: 100%;">0</div>
+            
+            <div id="chip-ds4" class="chip" style="left: calc(104px + (100% - 104px) * 0.5833); top: 100%;">0</div>
+            <div id="chip-ds5" class="chip" style="left: calc(104px + (100% - 104px) * 0.75); top: 100%;">0</div>
+            <div id="chip-ds6" class="chip" style="left: calc(104px + (100% - 104px) * 0.9166); top: 100%;">0</div>
 
             <div class="zero-cell" onclick="addNumber(0)">0</div>
             <div id="rouletteGrid" class="grid-rows"></div>
@@ -84,11 +85,11 @@
     </div>
 
     <div class="panel" style="background: var(--panel); padding:15px; border-radius:12px; border: 1px solid #1e293b;">
-        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">SYNCED PROGRESSION LOG</h3>
+        <h3 style="margin-top:0; font-size:0.9rem; color:var(--accent);">SIDE PROGRESSION LOG</h3>
         <div class="log-area">
             <table id="sessionLog">
                 <thead>
-                    <tr><th>Hit</th><th>Low Play</th><th>High Play</th><th>Result</th></tr>
+                    <tr><th>Hit</th><th>L-Play</th><th>H-Play</th><th>Result</th></tr>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -100,8 +101,6 @@
 <script>
     const reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     let history = [];
-    
-    // Shared unit values for the whole side
     let sideUnits = { low: 1, high: 1 };
     let currentPreds = { lows: [], highs: [] };
 
@@ -125,17 +124,19 @@
     function addNumber(n) {
         const hitDS = getDS(n);
         
-        // Progression Logic: Both DS on the same side share the same progression
+        // --- LOGIC UPDATED TO YOUR REQUIREMENT ---
+        // If Low side was played: 
         if (currentPreds.lows.length > 0) {
             const lowSideWon = currentPreds.lows.includes(hitDS?.toString());
-            if (lowSideWon) sideUnits.low = Math.max(1, sideUnits.low - 1);
-            else sideUnits.low += 1;
+            if (lowSideWon) sideUnits.low = Math.max(1, sideUnits.low - 1); // Win: Decrease side unit
+            else sideUnits.low += 1; // Loss: Increase side unit
         }
 
+        // If High side was played:
         if (currentPreds.highs.length > 0) {
             const highSideWon = currentPreds.highs.includes(hitDS?.toString());
-            if (highSideWon) sideUnits.high = Math.max(1, sideUnits.high - 1);
-            else sideUnits.high += 1;
+            if (highSideWon) sideUnits.high = Math.max(1, sideUnits.high - 1); // Win: Decrease side unit
+            else sideUnits.high += 1; // Loss: Increase side unit
         }
 
         history.push(n);
@@ -182,18 +183,16 @@
         
         document.getElementById('low-ds').innerText = currentPreds.lows.length ? currentPreds.lows.join(' & ') : '--';
         document.getElementById('high-ds').innerText = currentPreds.highs.length ? currentPreds.highs.join(' & ') : '--';
-        document.getElementById('low-unit-display').innerText = `Current Unit: ${sideUnits.low}`;
-        document.getElementById('high-unit-display').innerText = `Current Unit: ${sideUnits.high}`;
+        document.getElementById('low-unit-display').innerText = `Unit: ${sideUnits.low * base}`;
+        document.getElementById('high-unit-display').innerText = `Unit: ${sideUnits.high * base}`;
 
         document.querySelectorAll('.chip').forEach(c => c.style.display = 'none');
 
-        // Place Low Chips using sideUnits.low
         currentPreds.lows.forEach(ds => {
             const chip = document.getElementById(`chip-ds${ds}`);
             if (chip) { chip.style.display = 'flex'; chip.innerText = sideUnits.low * base; }
         });
 
-        // Place High Chips using sideUnits.high
         currentPreds.highs.forEach(ds => {
             const chip = document.getElementById(`chip-ds${ds}`);
             if (chip) { chip.style.display = 'flex'; chip.innerText = sideUnits.high * base; }
