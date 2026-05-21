@@ -3,78 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uniform Double Street Roulette Tracker & Simulator</title>
+    <title>Sided Double Street Roulette Tracker</title>
     <style>
         body {
             background-color: #064e26;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             padding: 20px;
             margin: 0;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
         }
-        h2 {
-            text-align: center;
-            margin-top: 0;
-            color: #eceff1;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        h2 { text-align: center; color: #fff; text-transform: uppercase; margin-top: 0; }
         
-        /* Dashboard Styling */
-        .dashboard {
+        .dash {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            gap: 30px;
             background: #032b14;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 6px;
             margin-bottom: 25px;
             border: 1px solid #096131;
         }
-        .dash-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .dash-item label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #81c784;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .dash-item input {
-            background: #111;
-            border: 1px solid #0b6635;
-            color: #00ff66;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 16px;
-            width: 130px;
-            text-align: center;
-            font-weight: bold;
-        }
+        .dash-field { display: flex; flex-direction: column; align-items: center; }
+        .dash-field label { font-size: 11px; text-transform: uppercase; color: #81c784; margin-bottom: 5px; font-weight: bold; }
+        .dash-field input { background: #111; border: 1px solid #0b6635; color: #00ff66; padding: 6px; font-size: 16px; width: 120px; text-align: center; font-weight: bold; border-radius: 4px; }
 
-        /* Interactive Roulette Board Setup */
-        .board-wrapper {
+        /* Board Container Wrapper */
+        .board-container {
             position: relative;
-            margin: 40px auto;
-            width: fit-content;
-            background: #04381a;
-            padding: 10px;
-            border: 4px solid #fff;
-            border-radius: 4px;
+            margin: 30px auto;
+            width: 849px; 
+            height: 169px;
+            padding: 0;
         }
         .roulette-board {
             display: flex;
-            position: relative;
+            width: 100%;
+            height: 100%;
         }
         .zero-box {
             width: 65px;
@@ -83,15 +55,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             background: #008000;
             cursor: pointer;
+            box-sizing: border-box;
         }
         .grid-container {
             display: grid;
             grid-template-columns: repeat(12, 65px);
             grid-template-rows: repeat(3, 55px);
+            width: 784px;
+            height: 165px;
+            box-sizing: border-box;
         }
         .cell {
             border: 2px solid #fff;
@@ -101,213 +77,105 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            position: relative;
             user-select: none;
+            box-sizing: border-box;
         }
-        .cell:hover {
-            opacity: 0.8;
-            background-color: #ffd700;
-            color: black;
-        }
+        .cell:hover { background-color: #ffd700 !important; color: black; }
         .red { background-color: #d32f2f; }
         .black { background-color: #1a1a1a; }
 
-        /* Absolute Placed Chips Overlay - Placed directly on the Double Street Intersections */
+        /* Chips placed precisely on the lower intersection lines */
         .chip {
             position: absolute;
-            width: 34px;
-            height: 34px;
-            background: #0d47a1;
+            width: 36px;
+            height: 36px;
             border: 2px dashed #fff;
             border-radius: 50%;
             color: white;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+            z-index: 99;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.7);
             transform: translate(-50%, -50%);
             pointer-events: none;
         }
 
-        /* --- FIXED DOUBLE STREET LINE PLACEMENTS --- */
-        #chip-ds-7-12   { left: calc(10px + 65px + (2 * 65px)); top: calc(10px + 165px); }                       
-        #chip-ds-10-15  { left: calc(10px + 65px + (3 * 65px)); top: calc(10px + 165px); }                     
-        #chip-ds-22-27  { left: calc(10px + 65px + (7 * 65px)); top: calc(10px + 165px); }             
-        #chip-ds-25-30  { left: calc(10px + 65px + (8 * 65px)); top: calc(10px + 165px); }             
+        /* Zero Box = 65px. Columns = 65px.
+           DS 7-12 (Intersection line after column 3, under number 7): 65 + (3 * 65) = 260px
+           DS 10-15 (Intersection line after column 4, under number 10): 65 + (4 * 65) = 325px
+           DS 22-27 (Intersection line after column 8, under number 22): 65 + (8 * 65) = 585px
+           DS 25-30 (Intersection line after column 9, under number 25): 65 + (9 * 65) = 650px
+        */
+        #chip-ds-7-12   { left: 260px; top: 165px; background: #2e7d32; } 
+        #chip-ds-10-15  { left: 325px; top: 165px; background: #1565c0; } 
+        #chip-ds-22-27  { left: 585px; top: 165px; background: #e65100; } 
+        #chip-ds-25-30  { left: 650px; top: 165px; background: #283593; } 
 
-        .instruction-note {
-            text-align: center;
-            font-size: 14px;
-            color: #ffd700;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        /* Display Panels */
+        /* Panels layout */
         .status-panel {
             background: #032b14;
             padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #096131;
-            margin-bottom: 20px;
-        }
-        .status-panel h3 {
-            margin-top: 0;
-            border-bottom: 2px solid #096131;
-            padding-bottom: 5px;
-            text-align: center;
-            font-size: 16px;
-        }
-        .panel-grid-layout {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-        .data-card {
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
             border-radius: 6px;
-            text-align: center;
-            border: 1px dashed #096131;
-        }
-        .data-card div:first-child {
-            font-size: 12px;
-            color: #81c784;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .data-val {
-            font-size: 20px;
-            font-weight: bold;
-            color: #00ff66;
-        }
-
-        /* Simulation Layout Styling */
-        .sim-suite {
-            background: #021a0c;
-            border: 2px solid #00ff66;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 25px;
-        }
-        .sim-suite h3 {
-            margin-top: 0;
-            color: #00ff66;
-            text-transform: uppercase;
-            font-size: 16px;
-            letter-spacing: 0.5px;
-        }
-        .sim-controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 15px;
+            border: 1px solid #096131;
             margin-bottom: 20px;
         }
-        .sim-btn {
-            background: #00ff66;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .sim-btn:hover {
-            background: #00cc52;
-        }
-        .bulk-textarea {
-            width: 100%;
-            height: 80px;
-            background: #111;
-            border: 1px solid #096131;
-            color: #00ff66;
-            padding: 8px;
-            font-family: monospace;
-            border-radius: 4px;
-            box-sizing: border-box;
-            resize: vertical;
-            margin-bottom: 15px;
-        }
-        .sim-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-        .sim-card {
-            background: #052613;
+        .status-panel h3 { margin: 0 0 15px 0; text-align: center; font-size: 14px; color: #81c784; letter-spacing: 1px;}
+        .panel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .data-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 4px; text-align: center; border: 1px solid #096131; }
+        .data-card div:first-child { font-size: 11px; color: #81c784; font-weight: bold; margin-bottom: 5px; }
+        .data-val { font-size: 22px; font-weight: bold; color: #00ff66; }
+
+        .log-panel {
+            background: #000;
             padding: 12px;
             border-radius: 6px;
-            border: 1px solid #096131;
-            text-align: center;
-        }
-        .sim-card div:first-child {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #81c784;
-            margin-bottom: 4px;
-        }
-        .sim-card div:last-child {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .profit-up { color: #00ff66; }
-        .loss-down { color: #ff3d3d; }
-
-        .log-container {
-            background: #000;
-            padding: 15px;
-            border-radius: 6px;
-            height: 140px;
+            height: 150px;
             overflow-y: auto;
             font-family: monospace;
             font-size: 13px;
-            color: #888;
+            color: #aaa;
             border: 1px solid #222;
-            margin-top: 20px;
         }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px dashed #222; padding-bottom: 4px;}
-        .log-win { color: #00ff66; font-weight: bold; }
-        .log-win-central { color: #2196f3; font-weight: bold; }
-        .log-loss-both { color: #ff9800; font-weight: bold; }
+        .log-entry { padding: 4px 0; border-bottom: 1px dashed #111; }
+        .txt-win { color: #00ff66; font-weight: bold; }
+        .txt-loss { color: #ff5252; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Uniform Double Street Roulette Strategy Tracker</h2>
-    <div class="instruction-note">⚡ Click directly on any number on the board below to instantly run a live spin!</div>
+    <h2>Sided Double Street Roulette Tracker</h2>
+    <div style="text-align:center; font-size:13px; color:#ffd700; margin-bottom:15px; font-weight:bold;">👉 Click any number directly on the board layout to log a live spin!</div>
 
-    <div class="dashboard">
-        <div class="dash-item">
-            <label>Real-Time Balance ($)</label>
-            <input type="number" id="balanceInput" value="1000" step="10">
+    <div class="dash">
+        <div class="dash-field">
+            <label>Current Bankroll ($)</label>
+            <input type="number" id="balanceInput" value="1000">
         </div>
-        <div class="dash-item">
-            <label>Base Bet Size ($ Amount)</label>
-            <input type="number" id="baseSizeInput" value="10" onchange="syncBaseSize()">
+        <div class="dash-field">
+            <label>Base Unit ($)</label>
+            <input type="number" id="baseSizeInput" value="10" onchange="syncBase()">
         </div>
     </div>
 
-    <div class="board-wrapper">
-        <div class="chip" id="chip-ds-7-12" title="DS 7-12">10</div>
-        <div class="chip" id="chip-ds-10-15" title="DS 10-15">10</div>
-        <div class="chip" id="chip-ds-22-27" title="DS 22-27">10</div>
-        <div class="chip" id="chip-ds-25-30" title="DS 25-30">10</div>
+    <div class="board-container">
+        <div class="chip" id="chip-ds-7-12">10</div>
+        <div class="chip" id="chip-ds-10-15">10</div>
+        <div class="chip" id="chip-ds-22-27">10</div>
+        <div class="chip" id="chip-ds-25-30">10</div>
 
         <div class="roulette-board">
-            <div class="zero-box" onclick="executeSpinEngine(0)">0</div>
+            <div class="zero-box" onclick="processSpin(0)">0</div>
             <div class="grid-container" id="boardGrid"></div>
         </div>
     </div>
 
     <div class="status-panel">
-        <h3>ACTIVE LIVE PROGRESSIONS (ALL STREETS UNIFORM)</h3>
-        <div class="panel-grid-layout">
+        <h3>CURRENT LIVE STREET WAGERS (SIDED PROGRESSION)</h3>
+        <div class="panel-grid">
             <div class="data-card">
                 <div>DS 7-12 Bet</div>
                 <div class="data-val" id="lbl-ds-7-12">10</div>
@@ -327,320 +195,121 @@
         </div>
     </div>
 
-    <div class="sim-suite" style="margin-bottom: 25px; border-color: #00bcd4;">
-        <h3 style="color: #00bcd4;">📊 Historical Bulk Data Simulation Suite</h3>
-        <label style="font-size: 12px; color: #aaa; display:block; margin-bottom: 5px;">Paste historical roulette numbers here (Comma, Space or Line separated):</label>
-        <textarea id="bulkDataInput" class="bulk-textarea" placeholder="Example: 15, 14, 28, 0, 11, 8, 26, 10, 25, 17"></textarea>
-        
-        <div class="sim-controls">
-            <div style="display:flex; flex-direction:column;">
-                <label style="font-size: 11px; color:#81c784; font-weight:bold; margin-bottom:4px;">MAX BAL UP (Profit Units)</label>
-                <input type="number" id="maxBalUpUnits" value="20" style="background:#111; border:1px solid #00bcd4; color:#00bcd4; padding:6px; width:110px; text-align:center; font-weight:bold; border-radius:4px;">
-            </div>
-            <div style="display:flex; flex-direction:column;">
-                <label style="font-size: 11px; color:#ff7043; font-weight:bold; margin-bottom:4px;">MAX BAL DOWN (Loss Units)</label>
-                <input type="number" id="maxBalDownUnits" value="50" style="background:#111; border:1px solid #00bcd4; color:#00bcd4; padding:6px; width:110px; text-align:center; font-weight:bold; border-radius:4px;">
-            </div>
-            <button class="sim-btn" style="background:#00bcd4; margin-top:15px;" onclick="runBulkSimulation()">Run Bulk Simulation</button>
-        </div>
-
-        <div class="sim-grid">
-            <div class="sim-card" style="border-color:#00bcd4;">
-                <div>Peak Profit Reached</div>
-                <div id="bulkPeakProfit" class="profit-up">$0</div>
-            </div>
-            <div class="sim-card" style="border-color:#00bcd4;">
-                <div>Deepest Drawdown</div>
-                <div id="bulkDeepestLoss" class="loss-down">$0</div>
-            </div>
-            <div class="sim-card" style="border-color:#00bcd4;">
-                <div>Ending Bankroll</div>
-                <div id="bulkEndingBankroll" style="color:white;">$0</div>
-            </div>
-            <div class="sim-card" style="border-color:#00bcd4;">
-                <div>Spins Analyzed / Status</div>
-                <div id="bulkStatus" style="font-size:14px !important; padding-top:4px; color:#aaa; font-family:monospace;">Processed: 0</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="sim-suite">
-        <h3>⚡ Strategy Performance Random Mass Simulator</h3>
-        <div class="sim-controls">
-            <label style="font-size: 13px; font-weight: bold;">Number of Spins:</label>
-            <input type="number" id="simSpinsInput" value="1000" style="background:#111; border:1px solid #00ff66; color:#00ff66; padding:6px; width:90px; text-align:center; font-weight:bold; border-radius:4px;">
-            <button class="sim-btn" onclick="runMassSimulation()">Run Simulation</button>
-        </div>
-        <div class="sim-grid">
-            <div class="sim-card">
-                <div>Max Profit Reached (Peak Balance)</div>
-                <div id="simPeakProfit" class="profit-up">$0</div>
-            </div>
-            <div class="sim-card">
-                <div>Max Loss Hit (Deepest Drop)</div>
-                <div id="simDeepestLoss" class="loss-down">$0</div>
-            </div>
-            <div class="sim-card">
-                <div>Ending Bankroll</div>
-                <div id="simEndingBankroll" style="color:white;">$0</div>
-            </div>
-            <div class="sim-card">
-                <div>Win/Loss Analytics</div>
-                <div id="simWinRatio" style="font-size:14px !important; padding-top:4px; color:#aaa; font-family:monospace;">Standard: 0 | Central: 0 | Misses: 0</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="log-container" id="logPanel">System ready. Click any number above to instantly record results...</div>
+    <div class="log-panel" id="logSystem">System initialized. Click numbers above to run sided progression...</div>
 </div>
 
 <script>
-    const structuralRows = [
+    const boardLayout = [
         [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
         [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
         [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
     ];
-    const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    const redNums = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 
-    // Double Street mappings
-    const ds_7_12_nums  = [7, 8, 9, 10, 11, 12];
-    const ds_10_15_nums = [10, 11, 12, 13, 14, 15];
-    const ds_22_27_nums = [22, 23, 24, 25, 26, 27];
-    const ds_25_30_nums = [25, 26, 27, 28, 29, 30];
+    // Sided range zones
+    const lowSideZone  = [7, 8, 9, 10, 11, 12, 13, 14, 15];
+    const highSideZone = [22, 23, 24, 25, 26, 27, 28, 29, 30];
 
-    // Central overlapping zones
-    const central_1 = [10, 11, 12];
-    const central_2 = [25, 26, 27];
+    // Central overlap triggers
+    const centralLow  = [10, 11, 12];
+    const centralHigh = [25, 26, 27];
 
-    let baseSize = 10;
-    
-    // Global UI Tracker variables
-    let ds_7_12_val = 10;
-    let ds_10_15_val = 10;
-    let ds_22_27_val = 10;
-    let ds_25_30_val = 10;
+    // Individual street groups for payout tracking
+    const ds7_12  = [7, 8, 9, 10, 11, 12];
+    const ds10_15 = [10, 11, 12, 13, 14, 15];
+    const ds22_27 = [22, 23, 24, 25, 26, 27];
+    const ds25_30 = [25, 26, 27, 28, 29, 30];
 
-    function buildInteractiveBoard() {
+    let baseUnit = 10;
+    let b7_12 = 10, b10_15 = 10, b22_27 = 10, b25_30 = 10;
+
+    function buildBoard() {
         const grid = document.getElementById('boardGrid');
         grid.innerHTML = '';
         for (let r = 0; r < 3; r++) {
             for (let c = 0; c < 12; c++) {
-                const num = structuralRows[r][c];
-                const colorClass = redNumbers.includes(num) ? 'red' : 'black';
+                const num = boardLayout[r][c];
+                const color = redNums.includes(num) ? 'red' : 'black';
                 const cell = document.createElement('div');
-                cell.className = `cell ${colorClass}`;
+                cell.className = `cell ${color}`;
                 cell.innerText = num;
-                cell.onclick = () => executeSpinEngine(num);
+                cell.onclick = () => processSpin(num);
                 grid.appendChild(cell);
             }
         }
     }
 
-    function syncBaseSize() {
-        const val = parseInt(document.getElementById('baseSizeInput').value) || 10;
-        baseSize = val;
-        resetTrackerState();
+    function syncBase() {
+        baseUnit = parseInt(document.getElementById('baseSizeInput').value) || 10;
+        b7_12 = baseUnit; b10_15 = baseUnit; b22_27 = baseUnit; b25_30 = baseUnit;
+        refreshUI();
     }
 
-    function resetTrackerState() {
-        ds_7_12_val = baseSize;
-        ds_10_15_val = baseSize;
-        ds_22_27_val = baseSize;
-        ds_25_30_val = baseSize;
-        updateUIElements();
+    function refreshUI() {
+        document.getElementById('chip-ds-7-12').innerText = b7_12;
+        document.getElementById('chip-ds-10-15').innerText = b10_15;
+        document.getElementById('chip-ds-22-27').innerText = b22_27;
+        document.getElementById('chip-ds-25-30').innerText = b25_30;
+
+        document.getElementById('lbl-ds-7-12').innerText = b7_12;
+        document.getElementById('lbl-ds-10-15').innerText = b10_15;
+        document.getElementById('lbl-ds-22-27').innerText = b22_27;
+        document.getElementById('lbl-ds-25-30').innerText = b25_30;
     }
 
-    function updateUIElements() {
-        document.getElementById('chip-ds-7-12').innerText = ds_7_12_val;
-        document.getElementById('chip-ds-10-15').innerText = ds_10_15_val;
-        document.getElementById('chip-ds-22-27').innerText = ds_22_27_val;
-        document.getElementById('chip-ds-25-30').innerText = ds_25_30_val;
-
-        document.getElementById('lbl-ds-7-12').innerText = ds_7_12_val;
-        document.getElementById('lbl-ds-10-15').innerText = ds_10_15_val;
-        document.getElementById('lbl-ds-22-27').innerText = ds_22_27_val;
-        document.getElementById('lbl-ds-25-30').innerText = ds_25_30_val;
-    }
-
-    function executeSpinEngine(num) {
-        let balance = parseFloat(document.getElementById('balanceInput').value) || 0;
-        let totalBetCost = ds_7_12_val + ds_10_15_val + ds_22_27_val + ds_25_30_val;
+    function processSpin(num) {
+        let currentBankroll = parseFloat(document.getElementById('balanceInput').value) || 0;
         
-        balance -= totalBetCost;
-        let roundPayout = 0;
+        let roundCost = b7_12 + b10_15 + b22_27 + b25_30;
+        currentBankroll -= roundCost;
 
-        let hit_7_12 = ds_7_12_nums.includes(num);
-        let hit_10_15 = ds_10_15_nums.includes(num);
-        let hit_22_27 = ds_22_27_nums.includes(num);
-        let hit_25_30 = ds_25_30_nums.includes(num);
+        let totalPayout = 0;
 
-        let isCentralHit = central_1.includes(num) || central_2.includes(num);
-        let logText = `Result: Num ${num} -> `;
+        // Payout Checks (Standard 5 to 1 payout, returns 6x bet)
+        if (ds7_12.includes(num))  totalPayout += (b7_12 * 6);
+        if (ds10_15.includes(num)) totalPayout += (b10_15 * 6);
+        if (ds22_27.includes(num)) totalPayout += (b22_27 * 6);
+        if (ds25_30.includes(num)) totalPayout += (b25_30 * 6);
 
-        // Calculate custom payout dynamically (Double street pays 5 to 1, returning 6x total)
-        if (hit_7_12) roundPayout += ds_7_12_val * 6;
-        if (hit_10_15) roundPayout += ds_10_15_val * 6;
-        if (hit_22_27) roundPayout += ds_22_27_val * 6;
-        if (hit_25_30) roundPayout += ds_25_30_val * 6;
+        currentBankroll += totalPayout;
+        document.getElementById('balanceInput').value = currentBankroll;
 
-        if (hit_7_12 || hit_10_15 || hit_22_27 || hit_25_30) {
-            if (isCentralHit) {
-                logText += `<span class="log-win-central">[CENTRAL DS WIN]</span> `;
-            } else {
-                logText += `<span class="log-win">[STANDARD DS WIN]</span> `;
-            }
+        // --- SIDED PROGRESSION ENGINE ---
+        
+        // 1. Evaluate Low Side (7 to 15)
+        if (lowSideZone.includes(num)) {
+            let dropAmount = centralLow.includes(num) ? (4 * baseUnit) : (2 * baseUnit);
+            b7_12  = Math.max(baseUnit, b7_12 - dropAmount);
+            b10_15 = Math.max(baseUnit, b10_15 - dropAmount);
         } else {
-            logText += `<span class="log-loss-both">[MISSED ALL STREETS]</span> `;
+            b7_12  += baseUnit;
+            b10_15 += baseUnit;
         }
 
-        // UNIFORM INDEPENDENT PROGRESSION DECONSTRUCTION
-        ds_7_12_val  = hit_7_12  ? Math.max(baseSize, ds_7_12_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_7_12_val + baseSize;
-        ds_10_15_val = hit_10_15 ? Math.max(baseSize, ds_10_15_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_10_15_val + baseSize;
-        ds_22_27_val = hit_22_27 ? Math.max(baseSize, ds_22_27_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_22_27_val + baseSize;
-        ds_25_30_val = hit_25_30 ? Math.max(baseSize, ds_25_30_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_25_30_val + baseSize;
-
-        balance += roundPayout;
-        document.getElementById('balanceInput').value = balance;
-        let dynamicProfitSummary = roundPayout - totalBetCost;
-        logText += ` [Net: ${dynamicProfitSummary >= 0 ? '+' : ''}${dynamicProfitSummary}$]`;
-
-        updateUIElements();
-
-        const logPanel = document.getElementById('logPanel');
-        if(logPanel.innerHTML.includes("System ready")) logPanel.innerHTML = "";
-        logPanel.innerHTML = `<div class="log-entry">${logText}</div>` + logPanel.innerHTML;
-    }
-
-    // UNIFORM HISTORICAL BULK DATA SIMULATION SUITE
-    function runBulkSimulation() {
-        const rawData = document.getElementById('bulkDataInput').value;
-        const spinsArray = rawData.split(/[\s,;\n\r]+/).filter(el => el !== "").map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
-
-        if (spinsArray.length === 0) {
-            alert("Please paste some valid historical numbers (0-36) inside the text area first!");
-            return;
+        // 2. Evaluate High Side (22 to 30)
+        if (highSideZone.includes(num)) {
+            let dropAmount = centralHigh.includes(num) ? (4 * baseUnit) : (2 * baseUnit);
+            b22_27 = Math.max(baseUnit, b22_27 - dropAmount);
+            b25_30 = Math.max(baseUnit, b25_30 - dropAmount);
+        } else {
+            b22_27 += baseUnit;
+            b25_30 += baseUnit;
         }
 
-        const initialBankroll = parseFloat(document.getElementById('balanceInput').value) || 1000;
-        const base = parseInt(document.getElementById('baseSizeInput').value) || 10;
-        
-        const maxBalUpUnits = parseInt(document.getElementById('maxBalUpUnits').value) || 20;
-        const maxBalDownUnits = parseInt(document.getElementById('maxBalDownUnits').value) || 50;
+        refreshUI();
 
-        const ceilingTarget = initialBankroll + (maxBalUpUnits * base);
-        const floorTarget = initialBankroll - (maxBalDownUnits * base);
+        let netProfit = totalPayout - roundCost;
+        let outcomeMsg = netProfit >= 0 ? `<span class="txt-win">WIN (+$${netProfit})</span>` : `<span class="txt-loss">LOSS (-$${Math.abs(netProfit)})</span>`;
+        let logMsg = `Spin: <b>${num}</b> -> ${outcomeMsg} | Stakes: [7-12: ${b7_12}] [10-15: ${b10_15}] | [22-27: ${b22_27}] [25-30: ${b25_30}]`;
 
-        let simBalance = initialBankroll;
-        let maxProfitReached = initialBankroll;
-        let deepestLossHit = initialBankroll;
-
-        let s7_12 = base, s10_15 = base, s22_27 = base, s25_30 = base;
-        let processedSpins = 0;
-        let terminationReason = "Finished Loop";
-
-        for (let i = 0; i < spinsArray.length; i++) {
-            let rolledNum = spinsArray[i];
-            let currentBetCost = s7_12 + s10_15 + s22_27 + s25_30;
-            simBalance -= currentBetCost;
-
-            let h7_12 = ds_7_12_nums.includes(rolledNum);
-            let h10_15 = ds_10_15_nums.includes(rolledNum);
-            let h22_27 = ds_22_27_nums.includes(rolledNum);
-            let h25_30 = ds_25_30_nums.includes(rolledNum);
-            let isCentral = central_1.includes(rolledNum) || central_2.includes(rolledNum);
-
-            if (h7_12) simBalance += (s7_12 * 6);
-            if (h10_15) simBalance += (s10_15 * 6);
-            if (h22_27) simBalance += (s22_27 * 6);
-            if (h25_30) simBalance += (s25_30 * 6);
-
-            // Independent check progression loop
-            s7_12  = h7_12  ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base))  : s7_12 + base;
-            s10_15 = h10_15 ? Math.max(base, s10_15 - ((isCentral ? 4 : 2) * base)) : s10_15 + base;
-            s22_27 = h22_27 ? Math.max(base, s22_27 - ((isCentral ? 4 : 2) * base)) : s22_27 + base;
-            s25_30 = h25_30 ? Math.max(base, s25_30 - ((isCentral ? 4 : 2) * base)) : s25_30 + base;
-
-            if (simBalance > maxProfitReached) maxProfitReached = simBalance;
-            if (simBalance < deepestLossHit) deepestLossHit = simBalance;
-
-            processedSpins++;
-
-            if (simBalance >= ceilingTarget) {
-                terminationReason = "🎯 Max Bal Up Hit";
-                break;
-            }
-            if (simBalance <= floorTarget) {
-                terminationReason = "🛑 Max Bal Down Hit";
-                break;
-            }
-        }
-
-        document.getElementById('bulkPeakProfit').innerText = `$${Math.round(maxProfitReached)}`;
-        document.getElementById('bulkDeepestLoss').innerText = `$${Math.round(deepestLossHit)}`;
-        document.getElementById('bulkEndingBankroll').innerText = `$${Math.round(simBalance)}`;
-        document.getElementById('bulkStatus').innerText = `${processedSpins} Spins (${terminationReason})`;
-
-        const logPanel = document.getElementById('logPanel');
-        logPanel.innerHTML = `<div class="log-entry" style="color: #00bcd4; font-weight:bold;">[BULK SIM COMPLETE] Handled ${processedSpins} inputs. Status: ${terminationReason}. Final Balance: $${Math.round(simBalance)}</div>` + logPanel.innerHTML;
-    }
-
-    // UNIFORM MASS SIMULATION SUITE ENGINE (RANDOM)
-    function runMassSimulation() {
-        const totalSpins = parseInt(document.getElementById('simSpinsInput').value) || 1000;
-        const initialBankroll = parseFloat(document.getElementById('balanceInput').value) || 1000;
-        const base = parseInt(document.getElementById('baseSizeInput').value) || 10;
-
-        let simBalance = initialBankroll;
-        let maxProfitReached = initialBankroll;
-        let deepestLossHit = initialBankroll;
-
-        let s7_12 = base, s10_15 = base, s22_27 = base, s25_30 = base;
-        let countStdWins = 0, countCentralWins = 0, countMisses = 0;
-
-        for (let i = 0; i < totalSpins; i++) {
-            let rolledNum = Math.floor(Math.random() * 37);
-            let currentBetCost = s7_12 + s10_15 + s22_27 + s25_30;
-            simBalance -= currentBetCost;
-
-            let h7_12 = ds_7_12_nums.includes(rolledNum);
-            let h10_15 = ds_10_15_nums.includes(rolledNum);
-            let h22_27 = ds_22_27_nums.includes(rolledNum);
-            let h25_30 = ds_25_30_nums.includes(rolledNum);
-            let isCentral = central_1.includes(rolledNum) || central_2.includes(rolledNum);
-
-            if (h7_12 || h10_15 || h22_27 || h25_30) {
-                if (isCentral) countCentralWins++; 
-                else countStdWins++;
-            } else {
-                countMisses++;
-            }
-
-            if (h7_12) simBalance += (s7_12 * 6);
-            if (h10_15) simBalance += (s10_15 * 6);
-            if (h22_27) simBalance += (s22_27 * 6);
-            if (h25_30) simBalance += (s25_30 * 6);
-
-            s7_12  = h7_12  ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base))  : s7_12 + base;
-            s10_15 = h10_15 ? Math.max(base, s10_15 - ((isCentral ? 4 : 2) * base)) : s10_15 + base;
-            s22_27 = h22_27 ? Math.max(base, s22_27 - ((isCentral ? 4 : 2) * base)) : s22_27 + base;
-            s25_30 = h25_30 ? Math.max(base, s25_30 - ((isCentral ? 4 : 2) * base)) : s25_30 + base;
-
-            if (simBalance > maxProfitReached) maxProfitReached = simBalance;
-            if (simBalance < deepestLossHit) deepestLossHit = simBalance;
-        }
-
-        document.getElementById('simPeakProfit').innerText = `$${Math.round(maxProfitReached)}`;
-        document.getElementById('simDeepestLoss').innerText = `$${Math.round(deepestLossHit)}`;
-        document.getElementById('simEndingBankroll').innerText = `$${Math.round(simBalance)}`;
-        document.getElementById('simWinRatio').innerHTML = `Standard: ${countStdWins} | Central: ${countCentralWins} | Misses: ${countMisses}`;
-
-        const logPanel = document.getElementById('logPanel');
-        logPanel.innerHTML = `<div class="log-entry" style="color: #00ff66; font-weight:bold;">[SIMULATION COMPLETE] Executed ${totalSpins} random spins. Peak reached: $${Math.round(maxProfitReached)} | Lowest drawdown: $${Math.round(deepestLossHit)}</div>` + logPanel.innerHTML;
+        const logger = document.getElementById('logSystem');
+        if (logger.innerHTML.includes("System initialized")) logger.innerHTML = "";
+        logger.innerHTML = `<div class="log-entry">${logMsg}</div>` + logger.innerHTML;
     }
 
     window.onload = () => {
-        buildInteractiveBoard();
-        updateUIElements();
+        buildBoard();
+        refreshUI();
     };
 </script>
 
