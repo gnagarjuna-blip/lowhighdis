@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Double Street Roulette Strategy Tracker & Simulator</title>
+    <title>Uniform Double Street Roulette Tracker & Simulator</title>
     <style>
         body {
             background-color: #064e26;
@@ -112,11 +112,11 @@
         .red { background-color: #d32f2f; }
         .black { background-color: #1a1a1a; }
 
-        /* Absolute Placed Chips Overlay */
+        /* Absolute Placed Chips Overlay - Placed directly on the Double Street Intersections */
         .chip {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             background: #0d47a1;
             border: 2px dashed #fff;
             border-radius: 50%;
@@ -132,7 +132,7 @@
             pointer-events: none;
         }
 
-        /* --- STABILIZED CHIP POSITIONING FOR DOUBLE STREETS --- */
+        /* --- FIXED DOUBLE STREET LINE PLACEMENTS --- */
         #chip-ds-7-12   { left: calc(10px + 65px + (2 * 65px)); top: calc(10px + 165px); }                       
         #chip-ds-10-15  { left: calc(10px + 65px + (3 * 65px)); top: calc(10px + 165px); }                     
         #chip-ds-22-27  { left: calc(10px + 65px + (7 * 65px)); top: calc(10px + 165px); }             
@@ -146,18 +146,13 @@
             font-weight: bold;
         }
 
-        /* Display panels split */
-        .panels-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+        /* Display Panels */
         .status-panel {
             background: #032b14;
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #096131;
+            margin-bottom: 20px;
         }
         .status-panel h3 {
             margin-top: 0;
@@ -166,19 +161,31 @@
             text-align: center;
             font-size: 16px;
         }
-        .data-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px dashed #096131;
-            font-size: 14px;
+        .panel-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .data-card {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px dashed #096131;
+        }
+        .data-card div:first-child {
+            font-size: 12px;
+            color: #81c784;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         .data-val {
+            font-size: 20px;
             font-weight: bold;
             color: #00ff66;
         }
 
-        /* Simulation & Bulk Suite Layout styling */
+        /* Simulation Layout Styling */
         .sim-suite {
             background: #021a0c;
             border: 2px solid #00ff66;
@@ -272,8 +279,8 @@
 <body>
 
 <div class="container">
-    <h2>Double Street Dynamic Roulette Strategy Engine</h2>
-    <div class="instruction-note">⚡ Click directly on any number on the board below to instantly run a real live spin!</div>
+    <h2>Uniform Double Street Roulette Strategy Tracker</h2>
+    <div class="instruction-note">⚡ Click directly on any number on the board below to instantly run a live spin!</div>
 
     <div class="dashboard">
         <div class="dash-item">
@@ -298,24 +305,32 @@
         </div>
     </div>
 
-    <div class="panels-grid">
-        <div class="status-panel">
-            <h3>LOW SECTOR DOUBLE STREETS</h3>
-            <div class="data-row"><span>DS 7-12 [-2 Win | -4 Central Win]:</span><span class="data-val" id="lbl-ds-7-12">10</span></div>
-            <div class="data-row"><span>DS 10-15 [-2 Win | -4 Central Win]:</span><span class="data-val" id="lbl-ds-10-15">10</span></div>
-        </div>
-        
-        <div class="status-panel">
-            <h3>HIGH SECTOR DOUBLE STREETS</h3>
-            <div class="data-row"><span>DS 22-27 [-2 Win | -4 Central Win]:</span><span class="data-val" id="lbl-ds-22-27">10</span></div>
-            <div class="data-row"><span>DS 25-30 [-2 Win | -4 Central Win]:</span><span class="data-val" id="lbl-ds-25-30">10</span></div>
+    <div class="status-panel">
+        <h3>ACTIVE LIVE PROGRESSIONS (ALL STREETS UNIFORM)</h3>
+        <div class="panel-grid-layout">
+            <div class="data-card">
+                <div>DS 7-12 Bet</div>
+                <div class="data-val" id="lbl-ds-7-12">10</div>
+            </div>
+            <div class="data-card">
+                <div>DS 10-15 Bet</div>
+                <div class="data-val" id="lbl-ds-10-15">10</div>
+            </div>
+            <div class="data-card">
+                <div>DS 22-27 Bet</div>
+                <div class="data-val" id="lbl-ds-22-27">10</div>
+            </div>
+            <div class="data-card">
+                <div>DS 25-30 Bet</div>
+                <div class="data-val" id="lbl-ds-25-30">10</div>
+            </div>
         </div>
     </div>
 
     <div class="sim-suite" style="margin-bottom: 25px; border-color: #00bcd4;">
         <h3 style="color: #00bcd4;">📊 Historical Bulk Data Simulation Suite</h3>
         <label style="font-size: 12px; color: #aaa; display:block; margin-bottom: 5px;">Paste historical roulette numbers here (Comma, Space or Line separated):</label>
-        <textarea id="bulkDataInput" class="bulk-textarea" placeholder="Example: 14, 28, 0, 11, 8, 26, 10, 25, 17"></textarea>
+        <textarea id="bulkDataInput" class="bulk-textarea" placeholder="Example: 15, 14, 28, 0, 11, 8, 26, 10, 25, 17"></textarea>
         
         <div class="sim-controls">
             <div style="display:flex; flex-direction:column;">
@@ -387,19 +402,19 @@
     ];
     const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 
-    // Double Street Numbers maps
+    // Double Street mappings
     const ds_7_12_nums  = [7, 8, 9, 10, 11, 12];
     const ds_10_15_nums = [10, 11, 12, 13, 14, 15];
     const ds_22_27_nums = [22, 23, 24, 25, 26, 27];
     const ds_25_30_nums = [25, 26, 27, 28, 29, 30];
 
-    // Overlapping Central DS spaces
+    // Central overlapping zones
     const central_1 = [10, 11, 12];
     const central_2 = [25, 26, 27];
 
     let baseSize = 10;
     
-    // Tracking progression units per street
+    // Global UI Tracker variables
     let ds_7_12_val = 10;
     let ds_10_15_val = 10;
     let ds_22_27_val = 10;
@@ -462,7 +477,7 @@
         let isCentralHit = central_1.includes(num) || central_2.includes(num);
         let logText = `Result: Num ${num} -> `;
 
-        // Calculate payouts (Double Street payout is 5 to 1)
+        // Calculate custom payout dynamically (Double street pays 5 to 1, returning 6x total)
         if (hit_7_12) roundPayout += ds_7_12_val * 6;
         if (hit_10_15) roundPayout += ds_10_15_val * 6;
         if (hit_22_27) roundPayout += ds_22_27_val * 6;
@@ -478,38 +493,11 @@
             logText += `<span class="log-loss-both">[MISSED ALL STREETS]</span> `;
         }
 
-        // Apply dynamic progression modifications
-        // DS 7-12
-        if (hit_7_12) {
-            let units = isCentralHit ? 4 : 2;
-            ds_7_12_val = Math.max(baseSize, ds_7_12_val - (units * baseSize));
-        } else {
-            ds_7_12_val += baseSize;
-        }
-
-        // DS 10-15
-        if (hit_10_15) {
-            let units = isCentralHit ? 4 : 2;
-            ds_10_15_val = Math.max(baseSize, ds_10_15_val - (units * baseSize));
-        } else {
-            ds_10_15_val += baseSize;
-        }
-
-        // DS 22-27
-        if (hit_22_27) {
-            let units = isCentralHit ? 4 : 2;
-            ds_22_27_val = Math.max(baseSize, ds_22_27_val - (units * baseSize));
-        } else {
-            ds_22_27_val += baseSize;
-        }
-
-        // DS 25-30
-        if (hit_25_30) {
-            let units = isCentralHit ? 4 : 2;
-            ds_25_30_val = Math.max(baseSize, ds_25_30_val - (units * baseSize));
-        } else {
-            ds_25_30_val += baseSize;
-        }
+        // UNIFORM INDEPENDENT PROGRESSION DECONSTRUCTION
+        ds_7_12_val  = hit_7_12  ? Math.max(baseSize, ds_7_12_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_7_12_val + baseSize;
+        ds_10_15_val = hit_10_15 ? Math.max(baseSize, ds_10_15_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_10_15_val + baseSize;
+        ds_22_27_val = hit_22_27 ? Math.max(baseSize, ds_22_27_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_22_27_val + baseSize;
+        ds_25_30_val = hit_25_30 ? Math.max(baseSize, ds_25_30_val - ((isCentralHit ? 4 : 2) * baseSize)) : ds_25_30_val + baseSize;
 
         balance += roundPayout;
         document.getElementById('balanceInput').value = balance;
@@ -523,7 +511,7 @@
         logPanel.innerHTML = `<div class="log-entry">${logText}</div>` + logPanel.innerHTML;
     }
 
-    // HISTORICAL BULK DATA SIMULATION SUITE
+    // UNIFORM HISTORICAL BULK DATA SIMULATION SUITE
     function runBulkSimulation() {
         const rawData = document.getElementById('bulkDataInput').value;
         const spinsArray = rawData.split(/[\s,;\n\r]+/).filter(el => el !== "").map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
@@ -566,7 +554,8 @@
             if (h22_27) simBalance += (s22_27 * 6);
             if (h25_30) simBalance += (s25_30 * 6);
 
-            s7_12 = h7_12 ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base)) : s7_12 + base;
+            // Independent check progression loop
+            s7_12  = h7_12  ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base))  : s7_12 + base;
             s10_15 = h10_15 ? Math.max(base, s10_15 - ((isCentral ? 4 : 2) * base)) : s10_15 + base;
             s22_27 = h22_27 ? Math.max(base, s22_27 - ((isCentral ? 4 : 2) * base)) : s22_27 + base;
             s25_30 = h25_30 ? Math.max(base, s25_30 - ((isCentral ? 4 : 2) * base)) : s25_30 + base;
@@ -592,10 +581,10 @@
         document.getElementById('bulkStatus').innerText = `${processedSpins} Spins (${terminationReason})`;
 
         const logPanel = document.getElementById('logPanel');
-        logPanel.innerHTML = `<div class="log-entry" style="color: #00bcd4; font-weight:bold;">[BULK SIM COMPLETE] Handled ${processedSpins} inputs. Terminated via: ${terminationReason}. Final Balance: $${Math.round(simBalance)}</div>` + logPanel.innerHTML;
+        logPanel.innerHTML = `<div class="log-entry" style="color: #00bcd4; font-weight:bold;">[BULK SIM COMPLETE] Handled ${processedSpins} inputs. Status: ${terminationReason}. Final Balance: $${Math.round(simBalance)}</div>` + logPanel.innerHTML;
     }
 
-    // MASS SIMULATION SUITE ENGINE (RANDOM)
+    // UNIFORM MASS SIMULATION SUITE ENGINE (RANDOM)
     function runMassSimulation() {
         const totalSpins = parseInt(document.getElementById('simSpinsInput').value) || 1000;
         const initialBankroll = parseFloat(document.getElementById('balanceInput').value) || 1000;
@@ -631,7 +620,7 @@
             if (h22_27) simBalance += (s22_27 * 6);
             if (h25_30) simBalance += (s25_30 * 6);
 
-            s7_12 = h7_12 ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base)) : s7_12 + base;
+            s7_12  = h7_12  ? Math.max(base, s7_12 - ((isCentral ? 4 : 2) * base))  : s7_12 + base;
             s10_15 = h10_15 ? Math.max(base, s10_15 - ((isCentral ? 4 : 2) * base)) : s10_15 + base;
             s22_27 = h22_27 ? Math.max(base, s22_27 - ((isCentral ? 4 : 2) * base)) : s22_27 + base;
             s25_30 = h25_30 ? Math.max(base, s25_30 - ((isCentral ? 4 : 2) * base)) : s25_30 + base;
@@ -646,7 +635,7 @@
         document.getElementById('simWinRatio').innerHTML = `Standard: ${countStdWins} | Central: ${countCentralWins} | Misses: ${countMisses}`;
 
         const logPanel = document.getElementById('logPanel');
-        logPanel.innerHTML = `<div class="log-entry" style="color: #00ff66; font-weight:bold;">[SIMULATION COMPLETE] Executed ${totalSpins} spins. Peak reached: $${Math.round(maxProfitReached)} | Lowest drop: $${Math.round(deepestLossHit)}</div>` + logPanel.innerHTML;
+        logPanel.innerHTML = `<div class="log-entry" style="color: #00ff66; font-weight:bold;">[SIMULATION COMPLETE] Executed ${totalSpins} random spins. Peak reached: $${Math.round(maxProfitReached)} | Lowest drawdown: $${Math.round(deepestLossHit)}</div>` + logPanel.innerHTML;
     }
 
     window.onload = () => {
