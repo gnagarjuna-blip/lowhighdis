@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Split Accumulator & Table</title>
+    <title>Dynamic Split Accumulator (16-Step Progression)</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -71,6 +71,7 @@
             border: 2px dashed #d4af37;
             color: #2ecc71;
             font-weight: bold;
+            word-wrap: break-word;
         }
         
         /* Interactive Roulette Table Styling */
@@ -205,7 +206,7 @@
         </div>
 
         <div class="stats-grid">
-            <div>Progression Step: <span id="statProg" style="color:#d4af37; font-weight:bold;">1</span> / 6</div>
+            <div>Progression Step: <span id="statProg" style="color:#d4af37; font-weight:bold;">1</span> / 16</div>
             <div>Total Splits Covered: <span id="statCover" style="color:#d4af37; font-weight:bold;">1</span></div>
             <div>Last Landed: <span id="statLast" style="color:#d4af37; font-weight:bold;">None</span></div>
         </div>
@@ -300,8 +301,8 @@
         } else {
             // Failure Route -> Dynamic Accumulation phase
             cycleCounter++;
-            if (cycleCounter > 6) {
-                alert("6-stage window exceeded. Hard wiping accumulator profile to hedge bankroll.");
+            if (cycleCounter > 16) {
+                alert("16-stage progression cap exceeded. Hard wiping accumulator profile to hedge bankroll.");
                 location.reload();
                 return;
             }
