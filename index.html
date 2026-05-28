@@ -3,464 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sided Double Street Tracker & Bulk Simulator</title>
+    <title>Dynamic Sector Interlocking Predictor</title>
     <style>
         body {
-            background-color: #064e26;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
+            padding: 20px;
         }
         .container {
-            max-width: 1000px;
+            max-width: 850px;
             margin: 0 auto;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+            border: 2px solid #d4af37;
         }
-        h2 { text-align: center; color: #fff; text-transform: uppercase; margin-top: 0; }
-        
-        .dash {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            background: #032b14;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            border: 1px solid #096131;
+        h1, h2 {
+            text-align: center;
+            color: #d4af37;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .dash-field { display: flex; flex-direction: column; align-items: center; }
-        .dash-field label { font-size: 11px; text-transform: uppercase; color: #81c784; margin-bottom: 5px; font-weight: bold; }
-        .dash-field input { background: #111; border: 1px solid #0b6635; color: #00ff66; padding: 6px; font-size: 16px; width: 120px; text-align: center; font-weight: bold; border-radius: 4px; }
-
-        /* Board Container Wrapper */
-        .board-container {
-            position: relative;
-            margin: 30px auto;
-            width: 849px; 
-            height: 169px;
-            padding: 0;
-        }
-        .roulette-board {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
-        .zero-box {
-            width: 65px;
-            height: 165px;
-            border: 2px solid #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
+        label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: bold;
-            background: #008000;
-            cursor: pointer;
-            box-sizing: border-box;
+            color: #b3b3b3;
         }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(12, 65px);
-            grid-template-rows: repeat(3, 55px);
-            width: 784px;
-            height: 165px;
+        textarea, input[type="number"] {
+            width: 100%;
+            background-color: #0a0a0a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px;
+            border-radius: 6px;
             box-sizing: border-box;
+            margin-bottom: 20px;
+            font-size: 16px;
         }
-        .cell {
-            border: 2px solid #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        textarea:focus, input:focus {
+            border-color: #d4af37;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            background-color: #d4af37;
+            color: #121212;
+            border: none;
+            padding: 14px;
             font-size: 18px;
             font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            box-sizing: border-box;
-        }
-        .cell:hover { background-color: #ffd700 !important; color: black; }
-        .red { background-color: #d32f2f; }
-        .black { background-color: #1a1a1a; }
-
-        /* Chip positioning classes */
-        .chip {
-            position: absolute;
-            width: 36px;
-            height: 36px;
-            border: 2px dashed #fff;
-            border-radius: 50%;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.7);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-
-        #chip-ds-7-12   { left: 260px; top: 165px; background: #2e7d32; } 
-        #chip-ds-10-15  { left: 325px; top: 165px; background: #1565c0; } 
-        #chip-ds-22-27  { left: 585px; top: 165px; background: #e65100; } 
-        #chip-ds-25-30  { left: 650px; top: 165px; background: #283593; } 
-
-        /* Status and Simulator Panels */
-        .status-panel {
-            background: #032b14;
-            padding: 15px;
             border-radius: 6px;
-            border: 1px solid #096131;
-            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .status-panel h3 { margin: 0 0 15px 0; text-align: center; font-size: 14px; color: #81c784; letter-spacing: 1px;}
-        .panel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .data-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 4px; text-align: center; border: 1px solid #096131; }
-        .data-card div:first-child { font-size: 11px; color: #81c784; font-weight: bold; margin-bottom: 5px; }
-        .data-val { font-size: 22px; font-weight: bold; color: #00ff66; }
-
-        .sim-suite {
-            background: #021a0c;
-            border: 2px solid #00ff66;
-            border-radius: 8px;
+        button:hover {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(212,175,55,0.5);
+        }
+        .section {
+            margin-top: 25px;
             padding: 20px;
-            margin-bottom: 25px;
+            background-color: #252525;
+            border-radius: 8px;
+            border-left: 5px solid #d4af37;
         }
-        .sim-suite h3 { margin: 0 0 10px 0; color: #00ff66; text-transform: uppercase; font-size: 15px; }
-        .bulk-textarea {
-            width: 100%; height: 80px; background: #111; border: 1px solid #096131;
-            color: #00ff66; padding: 8px; font-family: monospace; border-radius: 4px;
-            box-sizing: border-box; resize: vertical; margin-bottom: 15px;
+        .hidden {
+            display: none;
         }
-        .sim-controls { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
-        .sim-btn {
-            background: #00ff66; color: black; border: none; padding: 10px 20px;
-            font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+        .prediction-box {
+            background: #0a0a0a;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px dashed #d4af37;
+            color: #2ecc71;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-        .sim-btn:hover { background: #00cc52; }
-
-        .log-panel {
-            background: #000; padding: 12px; border-radius: 6px; height: 130px;
-            overflow-y: auto; font-family: monospace; font-size: 13px; color: #aaa; border: 1px solid #222;
+        .alert-win {
+            color: #2ecc71;
+            font-weight: bold;
+            text-align: center;
+            font-size: 26px;
+            animation: pulse 1.5s infinite;
         }
-        .log-entry { padding: 4px 0; border-bottom: 1px dashed #111; }
-        .txt-win { color: #00ff66; font-weight: bold; }
-        .txt-loss { color: #ff5252; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Sided Double Street Tracker & Simulator Suite</h2>
-    <div style="text-align:center; font-size:13px; color:#ffd700; margin-bottom:15px; font-weight:bold;">👉 Click any number directly on the board layout to log a live spin!</div>
-
-    <div class="dash">
-        <div class="dash-field">
-            <label>Current Bankroll ($)</label>
-            <input type="number" id="balanceInput" value="1000">
-        </div>
-        <div class="dash-field">
-            <label>Base Unit ($)</label>
-            <input type="number" id="baseSizeInput" value="10" onchange="syncBase()">
-        </div>
+    <h1>Dynamic Sector Interlocking Predictor</h1>
+    <p style="text-align: center; color: #888; font-style: italic; margin-top: -10px;">
+        Advanced Kinematic Layout Matrix for European Roulette
+    </p>
+    
+    <div id="step-1">
+        <label for="pastResults">Paste 200 to 1000 Past Results (separated by spaces, commas, or newlines):</label>
+        <textarea id="pastResults" rows="8" placeholder="Example: 32 15 19 4 21 2 25 17 34 6 27 13 36 11 30 8..."></textarea>
+        <button onclick="calculateInterlockingSectors()">Extract Kinetic Signature & Predict</button>
     </div>
 
-    <div class="board-container">
-        <div class="chip" id="chip-ds-7-12">10</div>
-        <div class="chip" id="chip-ds-10-15">10</div>
-        <div class="chip" id="chip-ds-22-27">10</div>
-        <div class="chip" id="chip-ds-25-30">10</div>
+    <div id="tracker-section" class="hidden">
+        <div class="section">
+            <h2>Active Dynamic Splits To Bet</h2>
+            <div id="predictionDisplay" class="prediction-box"></div>
+            <p style="color: #aaa; font-size: 13px; text-align: center; margin-top: 8px;">
+                Place your chips directly on the lines separating these pairs. Horizontal (diff of 1) or Vertical (diff of 3).
+            </p>
+        </div>
 
-        <div class="roulette-board">
-            <div class="zero-box" onclick="processSpin(0)">0</div>
-            <div class="grid-container" id="boardGrid"></div>
+        <div class="section">
+            <h2>Input Next Spin Outcome</h2>
+            <label for="nextNumber">What number just landed?</label>
+            <input type="number" id="nextNumber" min="0" max="36" placeholder="Enter number 0-36">
+            <button onclick="evaluateSpinOutcome()">Process Result</button>
+        </div>
+
+        <div class="section" style="background-color: #1a1a1a;">
+            <h3>Progression Control Engine</h3>
+            <p>Cycle Stage: <span id="statStep" style="color:#d4af37; font-weight:bold;">1</span> / 6</p>
+            <p>Current Board Coverage: <span id="statCount" style="color:#d4af37; font-weight:bold;">0</span> Splits</p>
         </div>
     </div>
-
-    <div class="status-panel">
-        <h3>CURRENT LIVE STREET WAGERS (SIDED PROGRESSION)</h3>
-        <div class="panel-grid">
-            <div class="data-card">
-                <div>DS 7-12 Bet</div>
-                <div class="data-val" id="lbl-ds-7-12">10</div>
-            </div>
-            <div class="data-card">
-                <div>DS 10-15 Bet</div>
-                <div class="data-val" id="lbl-ds-10-15">10</div>
-            </div>
-            <div class="data-card">
-                <div>DS 22-27 Bet</div>
-                <div class="data-val" id="lbl-ds-22-27">10</div>
-            </div>
-            <div class="data-card">
-                <div>DS 25-30 Bet</div>
-                <div class="data-val" id="lbl-ds-25-30">10</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="sim-suite" style="border-color: #00bcd4;">
-        <h3 style="color: #00bcd4;">📊 Paste Historical Bulk Data Simulator</h3>
-        <textarea id="bulkDataInput" class="bulk-textarea" placeholder="Paste data here (Example: 15, 12, 0, 26, 34, 7, 11, 23)"></textarea>
-        
-        <div class="sim-controls">
-            <button class="sim-btn" style="background:#00bcd4;" onclick="runBulkSimulation()">Simulate Bulk Data</button>
-        </div>
-
-        <div class="panel-grid">
-            <div class="data-card" style="border-color: #00bcd4;">
-                <div>Max Peak Balance (Highest Up)</div>
-                <div class="data-val" id="bulkMaxUp" style="color:#00ff66;">$0</div>
-            </div>
-            <div class="data-card" style="border-color: #00bcd4;">
-                <div>Max Low Balance (Lowest Down)</div>
-                <div class="data-val" id="bulkMaxDown" style="color:#ff5252;">$0</div>
-            </div>
-            <div class="data-card" style="border-color: #00bcd4;">
-                <div>Ending Balance</div>
-                <div class="data-val" id="bulkEndingBal" style="color:white;">$0</div>
-            </div>
-            <div class="data-card" style="border-color: #00bcd4;">
-                <div>Spins Evaluated</div>
-                <div class="data-val" id="bulkTotalSpins" style="color:#00bcd4; font-size:18px; padding-top:4px;">0</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="sim-suite">
-        <h3>⚡ Run Random Mass Simulation</h3>
-        <div class="sim-controls">
-            <label style="font-size:13px;">Spins Count:</label>
-            <input type="number" id="simSpinsInput" value="1000" style="background:#111; border:1px solid #00ff66; color:#00ff66; padding:6px; width:100px; text-align:center; font-weight:bold; border-radius:4px;">
-            <button class="sim-btn" onclick="runMassSimulation()">Simulate Random</button>
-        </div>
-        <div class="panel-grid">
-            <div class="data-card">
-                <div>Max Balance Up</div>
-                <div class="data-val" id="randMaxUp" style="color:#00ff66;">$0</div>
-            </div>
-            <div class="data-card">
-                <div>Max Balance Down</div>
-                <div class="data-val" id="randMaxDown" style="color:#ff5252;">$0</div>
-            </div>
-            <div class="data-card">
-                <div>Ending Balance</div>
-                <div class="data-val" id="randEndingBal" style="color:white;">$0</div>
-            </div>
-            <div class="data-card">
-                <div>Session Result</div>
-                <div class="data-val" id="randResult" style="font-size:16px; padding-top:6px; color:#aaa;">Ready</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="log-panel" id="logSystem">System initialized. Ready...</div>
 </div>
 
 <script>
-    const boardLayout = [
-        [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
-        [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
-        [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
-    ];
-    const redNums = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    // Global Constants & State Matrix
+    let activeSplits = [];
+    let progressionCycle = 1;
+    let trackSectorWeights = Array(37).fill(0);
 
-    const lowSideZone  = [7, 8, 9, 10, 11, 12, 13, 14, 15];
-    const highSideZone = [22, 23, 24, 25, 26, 27, 28, 29, 30];
+    // Precise European Wheel Sequence (Clockwise Physics Layout)
+    const WHEEL_LAYOUT = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 
-    const centralLow  = [10, 11, 12];
-    const centralHigh = [25, 26, 27];
-
-    const ds7_12  = [7, 8, 9, 10, 11, 12];
-    const ds10_15 = [10, 11, 12, 13, 14, 15];
-    const ds22_27 = [22, 23, 24, 25, 26, 27];
-    const ds25_30 = [25, 26, 27, 28, 29, 30];
-
-    let baseUnit = 10;
-    let b7_12 = 10, b10_15 = 10, b22_27 = 10, b25_30 = 10;
-
-    function buildBoard() {
-        const grid = document.getElementById('boardGrid');
-        grid.innerHTML = '';
-        for (let r = 0; r < 3; r++) {
-            for (let c = 0; c < 12; c++) {
-                const num = boardLayout[r][c];
-                const color = redNums.includes(num) ? 'red' : 'black';
-                const cell = document.createElement('div');
-                cell.className = `cell ${color}`;
-                cell.innerText = num;
-                cell.onclick = () => processSpin(num);
-                grid.appendChild(cell);
-            }
+    // Math Matrix Generator for strict Roulette Board Splits
+    function getValidSplitsForNumber(num) {
+        let options = [];
+        if (num === 0) {
+            return [[0, 1], [0, 2], [0, 3]];
         }
+        
+        // Vertical Splits (Difference of exactly 3)
+        if (num - 3 >= 1) options.push([num - 3, num]);
+        if (num + 3 <= 36) options.push([num, num + 3]);
+        
+        // Horizontal Splits (Difference of exactly 1, ensuring layout grid row alignment)
+        if (num % 3 !== 1) options.push([num - 1, num]); // Has left neighbor in same row
+        if (num % 3 !== 0) options.push([num, num + 1]); // Has right neighbor in same row
+        
+        return options;
     }
 
-    function syncBase() {
-        baseUnit = parseInt(document.getElementById('baseSizeInput').value) || 10;
-        b7_12 = baseUnit; b10_15 = baseUnit; b22_27 = baseUnit; b25_30 = baseUnit;
-        refreshUI();
-    }
-
-    function refreshUI() {
-        document.getElementById('chip-ds-7-12').innerText = b7_12;
-        document.getElementById('chip-ds-10-15').innerText = b10_15;
-        document.getElementById('chip-ds-22-27').innerText = b22_27;
-        document.getElementById('chip-ds-25-30').innerText = b25_30;
-
-        document.getElementById('lbl-ds-7-12').innerText = b7_12;
-        document.getElementById('lbl-ds-10-15').innerText = b10_15;
-        document.getElementById('lbl-ds-22-27').innerText = b22_27;
-        document.getElementById('lbl-ds-25-30').innerText = b25_30;
-    }
-
-    // Process a single live table dashboard entry click
-    function processSpin(num) {
-        let currentBankroll = parseFloat(document.getElementById('balanceInput').value) || 0;
-        let roundCost = b7_12 + b10_15 + b22_27 + b25_30;
-        currentBankroll -= roundCost;
-
-        let totalPayout = 0;
-        if (ds7_12.includes(num))  totalPayout += (b7_12 * 6);
-        if (ds10_15.includes(num)) totalPayout += (b10_15 * 6);
-        if (ds22_27.includes(num)) totalPayout += (b22_27 * 6);
-        if (ds25_30.includes(num)) totalPayout += (b25_30 * 6);
-
-        currentBankroll += totalPayout;
-        document.getElementById('balanceInput').value = currentBankroll;
-
-        // Run Sided Logic
-        let nextStakes = calculateSidedProgression(num, b7_12, b10_15, b22_27, b25_30, baseUnit);
-        b7_12 = nextStakes.s7_12; b10_15 = nextStakes.s10_15;
-        b22_27 = nextStakes.s22_27; b25_30 = nextStakes.s25_30;
-
-        refreshUI();
-
-        let netProfit = totalPayout - roundCost;
-        let outcomeMsg = netProfit >= 0 ? `<span class="txt-win">WIN (+$${netProfit})</span>` : `<span class="txt-loss">LOSS (-$${Math.abs(netProfit)})</span>`;
-        let logMsg = `Spin: <b>${num}</b> -> ${outcomeMsg} | Stakes: [7-12: ${b7_12}] [10-15: ${b10_15}] | [22-27: ${b22_27}] [25-30: ${b25_30}]`;
-
-        const logger = document.getElementById('logSystem');
-        if (logger.innerHTML.includes("System initialized")) logger.innerHTML = "";
-        logger.innerHTML = `<div class="log-entry">${logMsg}</div>` + logger.innerHTML;
-    }
-
-    // Shared algorithmic logic core processing 
-    function calculateSidedProgression(num, s7_12, s10_15, s22_27, s25_30, base) {
-        // Low side processing
-        if (lowSideZone.includes(num)) {
-            let drop = centralLow.includes(num) ? (4 * base) : (2 * base);
-            s7_12  = Math.max(base, s7_12 - drop);
-            s10_15 = Math.max(base, s10_15 - drop);
-        } else {
-            s7_12  += base;
-            s10_15 += base;
-        }
-
-        // High side processing
-        if (highSideZone.includes(num)) {
-            let drop = centralHigh.includes(num) ? (4 * base) : (2 * base);
-            s22_27 = Math.max(base, s22_27 - drop);
-            s25_30 = Math.max(base, s25_30 - drop);
-        } else {
-            s22_27 += base;
-            s25_30 += base;
-        }
-
-        return { s7_12, s10_15, s22_27, s25_30 };
-    }
-
-    // 1. RUN HISTORICAL BULK SIMULATION ENGINE
-    function runBulkSimulation() {
-        const rawData = document.getElementById('bulkDataInput').value;
-        const spins = rawData.split(/[\s,;\n\r]+/).filter(el => el !== "").map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 36);
-
-        if (spins.length === 0) {
-            alert("Please paste some valid roulette numbers first!");
+    function calculateInterlockingSectors() {
+        const rawInput = document.getElementById('pastResults').value;
+        const matchedDigits = rawInput.match(/\d+/g);
+        
+        if (!matchedDigits || matchedDigits.length < 200) {
+            alert(`Insufficient data pool. Please insert a minimum of 200 results. Found: ${matchedDigits ? matchedDigits.length : 0}`);
             return;
         }
 
-        let initialBankroll = parseFloat(document.getElementById('balanceInput').value) || 1000;
-        let base = parseInt(document.getElementById('baseSizeInput').value) || 10;
-
-        let simBalance = initialBankroll;
-        let maxUp = initialBankroll;
-        let maxDown = initialBankroll;
-
-        let s7_12 = base, s10_15 = base, s22_27 = base, s25_30 = base;
-
-        for (let i = 0; i < spins.length; i++) {
-            let rolled = spins[i];
-            let cost = s7_12 + s10_15 + s22_27 + s25_30;
-            simBalance -= cost;
-
-            if (ds7_12.includes(rolled))  simBalance += (s7_12 * 6);
-            if (ds10_15.includes(rolled)) simBalance += (s10_15 * 6);
-            if (ds22_27.includes(rolled)) simBalance += (s22_27 * 6);
-            if (ds25_30.includes(rolled)) simBalance += (s25_30 * 6);
-
-            if (simBalance > maxUp) maxUp = simBalance;
-            if (simBalance < maxDown) maxDown = simBalance;
-
-            let steps = calculateSidedProgression(rolled, s7_12, s10_15, s22_27, s25_30, base);
-            s7_12 = steps.s7_12; s10_15 = steps.s10_15; s22_27 = steps.s22_27; s25_30 = steps.s25_30;
-        }
-
-        document.getElementById('bulkMaxUp').innerText = `$${Math.round(maxUp)}`;
-        document.getElementById('bulkMaxDown').innerText = `$${Math.round(maxDown)}`;
-        document.getElementById('bulkEndingBal').innerText = `$${Math.round(simBalance)}`;
-        document.getElementById('bulkTotalSpins').innerText = spins.length;
-
-        const logger = document.getElementById('logSystem');
-        logger.innerHTML = `<div class="log-entry" style="color: #00bcd4;"><b>[BULK DATA SIM]</b> Processed ${spins.length} spins. Peak Up: $${Math.round(maxUp)} | Peak Down: $${Math.round(maxDown)}</div>` + logger.innerHTML;
-    }
-
-    // 2. RUN RANDOM MASS SIMULATION ENGINE
-    function runMassSimulation() {
-        const spinCount = parseInt(document.getElementById('simSpinsInput').value) || 1000;
-        let initialBankroll = parseFloat(document.getElementById('balanceInput').value) || 1000;
-        let base = parseInt(document.getElementById('baseSizeInput').value) || 10;
-
-        let simBalance = initialBankroll;
-        let maxUp = initialBankroll;
-        let maxDown = initialBankroll;
-
-        let s7_12 = base, s10_15 = base, s22_27 = base, s25_30 = base;
-
-        for (let i = 0; i < spinCount; i++) {
-            let rolled = Math.floor(Math.random() * 37);
-            let cost = s7_12 + s10_15 + s22_27 + s25_30;
-            simBalance -= cost;
-
-            if (ds7_12.includes(rolled))  simBalance += (s7_12 * 6);
-            if (ds10_15.includes(rolled)) simBalance += (s10_15 * 6);
-            if (ds22_27.includes(rolled)) simBalance += (s22_27 * 6);
-            if (ds25_30.includes(rolled)) simBalance += (s25_30 * 6);
-
-            if (simBalance > maxUp) maxUp = simBalance;
-            if (simBalance < maxDown) maxDown = simBalance;
-
-            let steps = calculateSidedProgression(rolled, s7_12, s10_15, s22_27, s25_30, base);
-            s7_12 = steps.s7_12; s10_15 = steps.s10_15; s22_27 = steps.s22_27; s25_30 = steps.s25_30;
-        }
-
-        document.getElementById('randMaxUp').innerText = `$${Math.round(maxUp)}`;
-        document.getElementById('randMaxDown').innerText = `$${Math.round(maxDown)}`;
-        document.getElementById('randEndingBal').innerText = `$${Math.round(simBalance)}`;
+        const filteredSpins = matchedDigits.map(Number).filter(n => n >= 0 && n <= 36);
         
-        let netProfit = simBalance - initialBankroll;
-        document.getElementById('randResult').innerHTML = netProfit >= 0 ? `<span class="txt-win">+$${Math.round(netProfit)}</span>` : `<span class="txt-loss">-$${Math.round(Math.abs(netProfit))}</span>`;
+        // Step 1: Smooth out the distribution array to locate physical cluster peaks
+        filteredSpins.forEach((num) => {
+            const index = WHEEL_LAYOUT.indexOf(num);
+            if (index !== -1) {
+                // Distributed weighting to adjacent physical wheel neighbors (Kinetic Sectoring)
+                trackSectorWeights[num] += 3; 
+                trackSectorWeights[WHEEL_LAYOUT[(index - 1 + 37) % 37]] += 2;
+                trackSectorWeights[WHEEL_LAYOUT[(index + 1) % 37]] += 2;
+                trackSectorWeights[WHEEL_LAYOUT[(index - 2 + 37) % 37]] += 1;
+                trackSectorWeights[WHEEL_LAYOUT[(index + 2) % 37]] += 1;
+            }
+        });
 
-        const logger = document.getElementById('logSystem');
-        logger.innerHTML = `<div class="log-entry" style="color: #00ff66;"><b>[RANDOM SIM]</b> Generated ${spinCount} spins. Max Peak: $${Math.round(maxUp)} | Lowest Drawdown: $${Math.round(maxDown)}</div>` + logger.innerHTML;
+        // Step 2: Target the absolute highest historical dynamic cluster center
+        let hotPivotNumber = 0;
+        let maxWeight = -1;
+        for(let i=0; i<=36; i++) {
+            if(trackSectorWeights[i] > maxWeight) {
+                maxWeight = trackSectorWeights[i];
+                hotPivotNumber = i;
+            }
+        }
+
+        // Generate initial dynamic interlocking splits around the hot sector center
+        progressionCycle = 1;
+        activeSplits = [];
+        
+        const initialTargetSplits = getValidSplitsForNumber(hotPivotNumber);
+        // Take up to the top 3 structural splits covering this high-probability hot section
+        activeSplits = initialTargetSplits.slice(0, 3);
+
+        // Transition Interface
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('tracker-section').classList.remove('hidden');
+        
+        renderTelemetry();
     }
 
-    window.onload = () => {
-        buildBoard();
-        refreshUI();
-    };
+    function evaluateSpinOutcome() {
+        const numberInput = document.getElementById('nextNumber');
+        const exactLandedValue = parseInt(numberInput.value);
+
+        if (isNaN(exactLandedValue) || exactLandedValue < 0 || exactLandedValue > 36) {
+            alert("Execution stopped. Input must be a verified Roulette integer (0-36).");
+            return;
+        }
+
+        // Check if the landed number hits inside our current split boundaries
+        let isHit = false;
+        for (let split of activeSplits) {
+            if (split.includes(exactLandedValue)) {
+                isHit = true;
+                break;
+            }
+        }
+
+        if (isHit) {
+            // WIN EVENT: Break cycle immediately, display celebration telemetry
+            document.getElementById('predictionDisplay').innerHTML = `
+                <div class="alert-win">🎯 HIT MATCH ON NUMBER ${exactLandedValue}! 🎯</div>
+                <div style="color:#fff; font-size:15px; margin-top:5px;">Cycle completed safely. System resetting...</div>
+            `;
+            setTimeout(() => {
+                if(confirm("Win Confirmed inside target zone! Refresh analyzer for next shoe session?")) {
+                    location.reload();
+                }
+            }, 800);
+        } else {
+            // LOSS EVENT: Dynamic Matrix expansion loop
+            progressionCycle++;
+            
+            if (progressionCycle > 6) {
+                alert("Critical 6-step progression cap reached. Manual hard reset executed to safeguard capital.");
+                location.reload();
+                return;
+            }
+
+            // Dynamic Counter-Strike Strategy:
+            // Fetch physical table splits directly corresponding to the number that just escaped our net
+            const defenseSplits = getValidSplitsForNumber(exactLandedValue);
+            
+            let elementsAdded = 0;
+            for (let targetSplit of defenseSplits) {
+                // Ensure we don't duplicate existing split patterns
+                const alreadyBetted = activeSplits.some(existing => 
+                    (existing[0] === targetSplit[0] && existing[1] === targetSplit[1])
+                );
+                
+                if (!alreadyBetted && elementsAdded < 2) { 
+                    // Add 2 interlocking math splits per loss phase to forcefully compound table dominance
+                    activeSplits.push(targetSplit);
+                    elementsAdded++;
+                }
+            }
+
+            renderTelemetry();
+        }
+
+        numberInput.value = "";
+    }
+
+    function renderTelemetry() {
+        // Format beautifully into human-readable table bets [X & Y]
+        const formattedOutput = activeSplits.map(pair => `[${pair[0]} & ${pair[1]}]`);
+        document.getElementById('predictionDisplay').innerText = formattedOutput.join(', ');
+        
+        // Update data logs
+        document.getElementById('statStep').innerText = progressionCycle;
+        document.getElementById('statCount').innerText = activeSplits.length;
+    }
 </script>
 
 </body>
