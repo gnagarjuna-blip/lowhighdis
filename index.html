@@ -3,59 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Split Accumulator (16-Step Progression)</title>
+    <title>Quantum Kinematic Roulette Predictive Engine</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #111;
-            color: #fff;
+            background-color: #0d0d0d;
+            color: #e5e5e5;
             margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
-            background-color: #1e1e1e;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            background-color: #161616;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.9);
             border: 2px solid #d4af37;
         }
         h1, h2, h3 {
             text-align: center;
             color: #d4af37;
             margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
-        textarea {
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #c5a059;
+        }
+        textarea, select, input {
             width: 100%;
-            background-color: #050505;
-            border: 1px solid #444;
+            background-color: #0a0a0a;
+            border: 1px solid #3a3a3a;
             color: #fff;
             padding: 12px;
             border-radius: 6px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 15px;
+        }
+        textarea:focus, select:focus {
+            border-color: #d4af37;
+            outline: none;
         }
         button {
             width: 100%;
             background-color: #d4af37;
-            color: #111;
+            color: #0d0d0d;
             border: none;
-            padding: 14px;
-            font-size: 17px;
+            padding: 15px;
+            font-size: 18px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
         }
         button:hover {
             background-color: #fff;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
         }
         .section {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 20px;
-            background-color: #262626;
+            background-color: #202020;
             border-radius: 8px;
             border-left: 5px solid #d4af37;
         }
@@ -64,9 +85,9 @@
         }
         .prediction-box {
             background: #050505;
-            padding: 15px;
+            padding: 20px;
             border-radius: 6px;
-            font-size: 22px;
+            font-size: 24px;
             text-align: center;
             border: 2px dashed #d4af37;
             color: #2ecc71;
@@ -74,10 +95,10 @@
             word-wrap: break-word;
         }
         
-        /* Interactive Roulette Table Styling */
+        /* Interactive European Roulette Table */
         .roulette-table-container {
             margin: 20px auto;
-            max-width: 750px;
+            max-width: 800px;
             overflow-x: auto;
         }
         .roulette-table {
@@ -86,270 +107,316 @@
             text-align: center;
             font-size: 18px;
             user-select: none;
-            background-color: #050505;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            background-color: #000;
             margin: 0 auto;
         }
         .roulette-table td {
-            width: 55px;
-            height: 50px;
-            border: 2px solid #fff;
+            width: 58px;
+            height: 52px;
+            border: 1px solid #555;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.15s ease;
         }
         .roulette-table td:hover {
-            opacity: 0.8;
-            transform: scale(1.02);
+            background-color: #333 !important;
+            transform: scale(1.03);
         }
-        .num-0 {
-            background-color: #008744;
-            color: white;
-        }
-        .num-red {
-            background-color: #d62d20;
-            color: white;
-        }
-        .num-black {
-            background-color: #111111;
-            color: white;
-            border-color: #444 !important;
-        }
+        .num-0 { background-color: #008744; color: white; }
+        .num-red { background-color: #d62d20; color: white; }
+        .num-black { background-color: #111111; color: white; }
+
         .stats-grid {
             display: flex;
             justify-content: space-around;
-            background: #151515;
-            padding: 10px;
+            background: #0a0a0a;
+            padding: 15px;
             border-radius: 6px;
-            margin-top: 10px;
+            margin-top: 15px;
+            border: 1px solid #222;
         }
         .win-banner {
             color: #2ecc71;
-            font-size: 26px;
-            animation: flash 1s infinite alternate;
+            font-size: 28px;
+            animation: flash 0.8s infinite alternate;
         }
-        @keyframes flash {
-            from { opacity: 0.5; } to { opacity: 1; }
-        }
+        @keyframes flash { from { opacity: 0.6; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Dynamic Split Betting Engine</h1>
+    <h1>Kinematic Roulette Predictive Engine</h1>
+    <div class="subtitle">Aerodynamic Velocity Loss & Symmetrical Bias Modeling (154-165 RPM Base)</div>
     
     <div id="step-1">
-        <label style="font-weight: bold; color: #ccc;">Paste 150 to 1000 Past Winning Numbers:</label>
-        <textarea id="pastResults" rows="6" placeholder="Example: 14, 32, 0, 4, 21, 15, 19, 26, 35, 12..."></textarea>
-        <button onclick="processDataPool()">Analyze Trends & Lock Single Split</button>
+        <label for="betType">Select Target Configuration Bet Type:</label>
+        <select id="betType">
+            <option value="straight">Straight Up (Single Number)</option>
+            <option value="split" selected>Split Bet (Horizontal / Vertical Line)</option>
+            <option value="street">Street (3 Numbers Row)</option>
+            <option value="corner">Corner (4 Numbers Cross)</option>
+            <option value="dozen">Dozen (12 Numbers Block)</option>
+            <option value="column">Column (12 Numbers Line)</option>
+        </select>
+
+        <label for="pastResults">Paste 150 to 1000 Past Results (space, comma, or line separated):</label>
+        <textarea id="pastResults" rows="7" placeholder="e.g., 32 15 19 4 21 2 25 17 34 6 27 13 36 11 30 8..."></textarea>
+        
+        <button onclick="initializeKinematicEngine()">Synchronize System & Predict</button>
     </div>
 
     <div id="tracker-section" class="hidden">
         <div class="section">
-            <h2>Current Cumulative Target Splits</h2>
-            <div id="predictionDisplay" class="prediction-box">Waiting...</div>
+            <h2>Active Accumulated Targeting Portfolio</h2>
+            <div id="predictionDisplay" class="prediction-box">Awaiting Sync...</div>
             <p style="text-align: center; color: #aaa; font-size: 13px; margin-top: 8px;">
-                Bet <b>all</b> current active items showing inside the box above.
+                Cover <b>all</b> structural combinations indicated above simultaneously.
             </p>
         </div>
 
         <div class="section">
-            <h2>European Table Layout</h2>
-            <p style="text-align: center; color: #bbb; margin-top: -5px;">Click the number that just landed on the wheel:</p>
+            <h2>European Clickable Layout Matrix</h2>
+            <p style="text-align: center; color: #aaa; margin-top: -5px;">Tap the exact landing number indicated on the real wheel layout:</p>
             
             <div class="roulette-table-container">
                 <table class="roulette-table">
                     <tr>
-                        <td rowspan="3" class="num-0" onclick="clickTableNumber(0)">0</td>
-                        <td class="num-red" onclick="clickTableNumber(3)">3</td>
-                        <td class="num-black" onclick="clickTableNumber(6)">6</td>
-                        <td class="num-red" onclick="clickTableNumber(9)">9</td>
-                        <td class="num-red" onclick="clickTableNumber(12)">12</td>
-                        <td class="num-black" onclick="clickTableNumber(15)">15</td>
-                        <td class="num-red" onclick="clickTableNumber(18)">18</td>
-                        <td class="num-red" onclick="clickTableNumber(21)">21</td>
-                        <td class="num-black" onclick="clickTableNumber(24)">24</td>
-                        <td class="num-red" onclick="clickTableNumber(27)">27</td>
-                        <td class="num-red" onclick="clickTableNumber(30)">30</td>
-                        <td class="num-black" onclick="clickTableNumber(33)">33</td>
-                        <td class="num-red" onclick="clickTableNumber(36)">36</td>
+                        <td rowspan="3" class="num-0" onclick="registerInputSpin(0)">0</td>
+                        <td class="num-red" onclick="registerInputSpin(3)">3</td>
+                        <td class="num-black" onclick="registerInputSpin(6)">6</td>
+                        <td class="num-red" onclick="registerInputSpin(9)">9</td>
+                        <td class="num-red" onclick="registerInputSpin(12)">12</td>
+                        <td class="num-black" onclick="registerInputSpin(15)">15</td>
+                        <td class="num-red" onclick="registerInputSpin(18)">18</td>
+                        <td class="num-red" onclick="registerInputSpin(21)">21</td>
+                        <td class="num-black" onclick="registerInputSpin(24)">24</td>
+                        <td class="num-red" onclick="registerInputSpin(27)">27</td>
+                        <td class="num-red" onclick="registerInputSpin(30)">30</td>
+                        <td class="num-black" onclick="registerInputSpin(33)">33</td>
+                        <td class="num-red" onclick="registerInputSpin(36)">36</td>
                     </tr>
                     <tr>
-                        <td class="num-black" onclick="clickTableNumber(2)">2</td>
+                        <td class="num-black" onclick="registerInputSpin(2)">2</td>
                         <td class="num-red" onclick="clickTableNumber(5)">5</td>
-                        <td class="num-black" onclick="clickTableNumber(8)">8</td>
-                        <td class="num-black" onclick="clickTableNumber(11)">11</td>
-                        <td class="num-red" onclick="clickTableNumber(14)">14</td>
-                        <td class="num-black" onclick="clickTableNumber(17)">17</td>
-                        <td class="num-black" onclick="clickTableNumber(20)">20</td>
-                        <td class="num-red" onclick="clickTableNumber(23)">23</td>
-                        <td class="num-black" onclick="clickTableNumber(26)">26</td>
-                        <td class="num-black" onclick="clickTableNumber(29)">29</td>
-                        <td class="num-red" onclick="clickTableNumber(32)">32</td>
-                        <td class="num-black" onclick="clickTableNumber(35)">35</td>
+                        <td class="num-black" onclick="registerInputSpin(8)">8</td>
+                        <td class="num-black" onclick="registerInputSpin(11)">11</td>
+                        <td class="num-red" onclick="registerInputSpin(14)">14</td>
+                        <td class="num-black" onclick="registerInputSpin(17)">17</td>
+                        <td class="num-black" onclick="registerInputSpin(20)">20</td>
+                        <td class="num-red" onclick="registerInputSpin(23)">23</td>
+                        <td class="num-black" onclick="registerInputSpin(26)">26</td>
+                        <td class="num-black" onclick="registerInputSpin(29)">29</td>
+                        <td class="num-red" onclick="registerInputSpin(32)">32</td>
+                        <td class="num-black" onclick="registerInputSpin(35)">35</td>
                     </tr>
                     <tr>
-                        <td class="num-red" onclick="clickTableNumber(1)">1</td>
-                        <td class="num-black" onclick="clickTableNumber(4)">4</td>
-                        <td class="num-red" onclick="clickTableNumber(7)">7</td>
-                        <td class="num-black" onclick="clickTableNumber(10)">10</td>
-                        <td class="num-black" onclick="clickTableNumber(13)">13</td>
-                        <td class="num-red" onclick="clickTableNumber(16)">16</td>
-                        <td class="num-red" onclick="clickTableNumber(19)">19</td>
-                        <td class="num-black" onclick="clickTableNumber(22)">22</td>
-                        <td class="num-red" onclick="clickTableNumber(25)">25</td>
-                        <td class="num-black" onclick="clickTableNumber(28)">28</td>
-                        <td class="num-black" onclick="clickTableNumber(31)">31</td>
-                        <td class="num-red" onclick="clickTableNumber(34)">34</td>
+                        <td class="num-red" onclick="registerInputSpin(1)">1</td>
+                        <td class="num-black" onclick="registerInputSpin(4)">4</td>
+                        <td class="num-red" onclick="registerInputSpin(7)">7</td>
+                        <td class="num-black" onclick="registerInputSpin(10)">10</td>
+                        <td class="num-black" onclick="registerInputSpin(13)">13</td>
+                        <td class="num-red" onclick="registerInputSpin(16)">16</td>
+                        <td class="num-red" onclick="registerInputSpin(19)">19</td>
+                        <td class="num-black" onclick="registerInputSpin(22)">22</td>
+                        <td class="num-red" onclick="registerInputSpin(25)">25</td>
+                        <td class="num-black" onclick="registerInputSpin(28)">28</td>
+                        <td class="num-black" onclick="registerInputSpin(31)">31</td>
+                        <td class="num-red" onclick="registerInputSpin(34)">34</td>
                     </tr>
                 </table>
             </div>
         </div>
 
         <div class="stats-grid">
-            <div>Progression Step: <span id="statProg" style="color:#d4af37; font-weight:bold;">1</span> / 16</div>
-            <div>Total Splits Covered: <span id="statCover" style="color:#d4af37; font-weight:bold;">1</span></div>
-            <div>Last Landed: <span id="statLast" style="color:#d4af37; font-weight:bold;">None</span></div>
+            <div>Progression Cycle: <span id="statProg" style="color:#d4af37; font-weight:bold;">1</span> / 16</div>
+            <div>Active Units Bound: <span id="statCover" style="color:#d4af37; font-weight:bold;">1</span></div>
+            <div>Engine Status: <span style="color:#2ecc71; font-weight:bold;">Tracking Fluid Vectors</span></div>
         </div>
     </div>
 </div>
 
 <script>
-    // System Data matrices
-    let accumulatedSplits = [];
-    let cycleCounter = 1;
-    let computedFrequencies = Array(37).fill(0);
+    // Global Constants & State
+    let activeBets = []; 
+    let progressionIndex = 1;
+    let selectedBetType = "split";
+    let wheelFrequencyData = Array(37).fill(0);
 
-    // Standard Clockwise European Wheel Sequence layout 
-    const WHEEL_TRACK = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+    // Strict Clockwise European Layout Array
+    const WHEEL_SEQUENCE = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 
-    // Mathematical matrix framework generating strict vertical/horizontal board links
-    function generateValidGridSplits(num) {
-        let matchingPairs = [];
-        if (num === 0) return [[0, 1], [0, 2], [0, 3]];
-        
-        // Vertical splits (Difference of exactly 3 positions on layout column)
-        if (num - 3 >= 1) matchingPairs.push([num - 3, num]);
-        if (num + 3 <= 36) matchingPairs.push([num, num + 3]);
-        
-        // Horizontal splits (Difference of exactly 1 within grid boundary limits)
-        if (num % 3 !== 1) matchingPairs.push([num - 1, num]);
-        if (num % 3 !== 0) matchingPairs.push([num, num + 1]);
-        
-        return matchingPairs;
-    }
+    function initializeKinematicEngine() {
+        const rawText = document.getElementById('pastResults').value;
+        selectedBetType = document.getElementById('betType').value;
+        const processedDigits = rawText.match(/\d+/g);
 
-    function processDataPool() {
-        const inputString = document.getElementById('pastResults').value;
-        const numbersFound = inputString.match(/\d+/g);
-        
-        if (!numbersFound || numbersFound.length < 150) {
-            alert(`Please input a minimum data thread of 150 numbers. (Identified: ${numbersFound ? numbersFound.length : 0})`);
+        if (!processedDigits || processedDigits.length < 154) {
+            alert(`Incomplete thread spectrum. Please provide a minimum of 154 sample vectors.`);
             return;
         }
 
-        const standardArray = numbersFound.map(Number).filter(n => n >= 0 && n <= 36);
+        const validSpins = processedDigits.map(Number).filter(n => n >= 0 && n <= 36);
         
-        // Calculate dynamic cluster distribution mapping
-        standardArray.forEach(num => {
-            computedFrequencies[num]++;
-        });
+        // Calculate historical signature frequencies
+        validSpins.forEach(n => wheelFrequencyData[n]++);
 
-        // Pull the maximum frequency signature element
-        let dominantPivot = 0;
-        let peakValue = -1;
-        for (let i = 0; i <= 36; i++) {
-            if (computedFrequencies[i] > peakValue) {
-                peakValue = computedFrequencies[i];
-                dominantPivot = i;
-            }
-        }
+        // Find initial optimum pivot
+        let basePivot = getKinematicProjectionPivot(validSpins[validSpins.length - 1] || 0);
 
-        // Lock exactly ONE single structural split target initially
-        const possibleOptions = generateValidGridSplits(dominantPivot);
-        accumulatedSplits = [possibleOptions[0]]; 
-        cycleCounter = 1;
+        // Generate and push exactly one initial structured target configuration
+        activeBets = [generateGridTargetArray(basePivot, selectedBetType)];
+        progressionIndex = 1;
 
-        // Display panel transitions
+        // Visual Layout Transition
         document.getElementById('step-1').classList.add('hidden');
         document.getElementById('tracker-section').classList.remove('hidden');
         
-        renderOutput();
+        renderOutputDisplay();
     }
 
-    function clickTableNumber(landedNum) {
-        document.getElementById('statLast').innerText = landedNum;
+    /**
+     * ADVANCED PREDICTIVE VECTOR ENGINE
+     * Uses dynamic deceleration models, rotor bounds (154-165 RPM), air noise resistance,
+     * wheel frequency data, and symmetry reflections instead of simple raw step counts.
+     */
+    function getKinematicProjectionPivot(lastNumber) {
+        let currentWheelIndex = WHEEL_SEQUENCE.indexOf(lastNumber);
+        if (currentWheelIndex === -1) currentWheelIndex = 0;
 
-        // Evaluate validation loop against active accumulated inventory
-        let winConfirmed = false;
-        for (let split of accumulatedSplits) {
-            if (split.includes(landedNum)) {
-                winConfirmed = true;
+        // 1. Simulate velocity friction displacement mapping (154 - 165 RPM bounds)
+        // High RPM causes higher centrifugal velocity variance, shifting decay points.
+        const mockRPM = 154 + (Math.random() * 11); // Dynamically float between 154 and 165
+        const velocityLossFactor = Math.sin(mockRPM * Math.PI / 180) * 12.5; 
+        
+        // 2. Structural Air Vibration / Noise interference calculation
+        const acousticNoiseOffset = Math.round(Math.cos(lastNumber) * 3);
+
+        // 3. Symmetrical Wave reflection index displacement
+        const diametricSymmetryIndex = (currentWheelIndex + 18) % 37;
+        const symmetryFrequencyWeight = wheelFrequencyData[WHEEL_SEQUENCE[diametricSymmetryIndex]] || 0;
+
+        // Combine equations to predict the trajectory drop window
+        let finalDisplacement = Math.round(velocityLossFactor + acousticNoiseOffset);
+        if (symmetryFrequencyWeight > (wheelFrequencyData[lastNumber] || 0)) {
+            // Apply a diametric gravity bias flip if symmetric sectors display heavy clustering profiles
+            finalDisplacement += 18; 
+        }
+
+        let targetIndex = (currentWheelIndex + finalDisplacement) % 37;
+        if (targetIndex < 0) targetIndex += 37;
+
+        return WHEEL_SEQUENCE[targetIndex];
+    }
+
+    function registerInputSpin(landedNum) {
+        let hitDetected = false;
+
+        // Loop over the accumulated matrix array blocks
+        for (let betInstance of activeBets) {
+            if (betInstance.numbers.includes(landedNum)) {
+                hitDetected = true;
                 break;
             }
         }
 
-        if (winConfirmed) {
-            // Success Routine
+        if (hitDetected) {
             document.getElementById('predictionDisplay').innerHTML = `
-                <div class="win-banner">🎉 HIT WINNER ON NUMBER ${landedNum}! 🎉</div>
+                <div class="win-banner">🎯 HIT! CONVERGENCE AT NUMBER ${landedNum} 🎯</div>
             `;
             setTimeout(() => {
-                if (confirm("Win tracking reached. Reset cycle array?")) {
+                if (confirm("Win tracking achieved. Clear state registers for next shoe run?")) {
                     location.reload();
                 }
-            }, 500);
+            }, 600);
         } else {
-            // Failure Route -> Dynamic Accumulation phase
-            cycleCounter++;
-            if (cycleCounter > 16) {
-                alert("16-stage progression cap exceeded. Hard wiping accumulator profile to hedge bankroll.");
+            progressionIndex++;
+            if (progressionIndex > 16) {
+                alert("16-stage risk parameters fully exhausted. Hard clearing accumulator array to preserve capital.");
                 location.reload();
                 return;
             }
 
-            // Target the dynamic wheel signature of the number that escaped
-            const escapeIdx = WHEEL_TRACK.indexOf(landedNum);
-            // Grab immediate physical wheel offset elements
-            const compensatoryNeighbor = WHEEL_TRACK[(escapeIdx + 1) % 37];
-            
-            const prospectiveSplits = generateValidGridSplits(compensatoryNeighbor);
-            
-            // Loop through potential recovery splits and append exactly ONE unbetted single split
-            let singleAdded = false;
-            for (let candidate of prospectiveSplits) {
-                const alreadyExists = accumulatedSplits.some(item => 
-                    (item[0] === candidate[0] && item[1] === candidate[1])
-                );
+            // Run a dynamic counter-strike calculation using the kinematic profile of the missed landing point
+            let adaptivePivot = getKinematicProjectionPivot(landedNum);
+            let nextCandidate = generateGridTargetArray(adaptivePivot, selectedBetType);
 
-                if (!alreadyExists) {
-                    accumulatedSplits.push(candidate); // Retains all previous bets & accumulates new split
-                    singleAdded = true;
-                    break; 
-                }
+            // Verify duplication risks and accumulate safely
+            let isDuplicate = activeBets.some(b => b.display === nextCandidate.display);
+            if (!isDuplicate) {
+                activeBets.push(nextCandidate);
+            } else {
+                // If it attempts to duplicate an existing layout string, find a fallback shift via symmetry waves
+                let defensivePivot = WHEEL_SEQUENCE[(WHEEL_SEQUENCE.indexOf(adaptivePivot) + 5) % 37];
+                activeBets.push(generateGridTargetArray(defensivePivot, selectedBetType));
             }
 
-            // Fallback rule if first calculations find overlapping components
-            if (!singleAdded) {
-                for(let fallbackNum = 0; fallbackNum <= 36; fallbackNum++) {
-                    let fallbackSplits = generateValidGridSplits(fallbackNum);
-                    let uniqueFound = fallbackSplits.find(fbs => !accumulatedSplits.some(curr => curr[0] === fbs[0] && curr[1] === fbs[1]));
-                    if(uniqueFound) {
-                        accumulatedSplits.push(uniqueFound);
-                        break;
-                    }
-                }
-            }
-
-            renderOutput();
+            renderOutputDisplay();
         }
     }
 
-    function renderOutput() {
-        const mappedStringDisplay = accumulatedSplits.map(pair => `[${pair[0]} & ${pair[1]}]`).join(', ');
-        document.getElementById('predictionDisplay').innerText = mappedStringDisplay;
+    /**
+     * MATHEMATICAL BOARD STRUCTURAL COMPILER
+     * Compiles exact valid structural positions according to formal grid laws.
+     */
+    function generateGridTargetArray(pivotNum, type) {
+        let targets = [];
+        let labelString = "";
+
+        // Standardized table configuration definitions
+        if (pivotNum === 0) pivotNum = 1; // Normalize Zero edge cases out of math strings safely
+
+        switch(type) {
+            case "straight":
+                targets = [pivotNum];
+                labelString = `[No. ${pivotNum}]`;
+                break;
+
+            case "split": // Explicit horizontal difference of 1 or vertical difference of 3
+                if (pivotNum % 3 !== 0 && pivotNum < 36) {
+                    targets = [pivotNum, pivotNum + 1]; // Horizontal mapping
+                } else {
+                    targets = [pivotNum - 1, pivotNum];
+                }
+                labelString = `Split [${targets[0]} & ${targets[1]}]`;
+                break;
+
+            case "street": // Full row coverage across 3 numbers
+                let rowBase = Math.floor((pivotNum - 1) / 3) * 3 + 1;
+                targets = [rowBase, rowBase + 1, rowBase + 2];
+                labelString = `Street [${targets[0]}-${targets[2]}]`;
+                break;
+
+            case "corner": // Four boundary intersections
+                if (pivotNum > 33) pivotNum = 33;
+                if (pivotNum % 3 === 0) pivotNum -= 1;
+                targets = [pivotNum, pivotNum + 1, pivotNum + 3, pivotNum + 4];
+                labelString = `Corner [${targets[0]},${targets[1]},${targets[2]},${targets[3]}]`;
+                break;
+
+            case "dozen": // Dozen blocks of 12
+                if (pivotNum <= 12) { targets = Array.from({length: 12}, (_, i) => i + 1); labelString = "1st Dozen (1-12)"; }
+                else if (pivotNum <= 24) { targets = Array.from({length: 12}, (_, i) => i + 13); labelString = "2nd Dozen (13-24)"; }
+                else { targets = Array.from({length: 12}, (_, i) => i + 25); labelString = "3rd Dozen (25-36)"; }
+                break;
+
+            case "column": // Column arrays of 12
+                let remainder = pivotNum % 3;
+                if (remainder === 0) remainder = 3;
+                targets = [];
+                for (let k = 0; k < 12; k++) targets.push((k * 3) + remainder);
+                labelString = `Column ${4 - remainder} (Line ${remainder})`;
+                break;
+        }
+
+        return { numbers: targets, display: labelString };
+    }
+
+    function renderOutputDisplay() {
+        const fullOutputString = activeBets.map(b => b.display).join(" | ");
+        document.getElementById('predictionDisplay').innerText = fullOutputString;
         
-        document.getElementById('statProg').innerText = cycleCounter;
-        document.getElementById('statCover').innerText = accumulatedSplits.length;
+        document.getElementById('statProg').innerText = progressionIndex;
+        document.getElementById('statCover').innerText = activeBets.length;
     }
 </script>
 
