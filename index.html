@@ -160,6 +160,7 @@
             <option value="straight">Straight Up (Single Number)</option>
             <option value="split" selected>Split Bet (Horizontal / Vertical Line)</option>
             <option value="street">Street (3 Numbers Row)</option>
+            <option value="doublestreet">Street (6 Numbers Row)</option>
             <option value="corner">Corner (4 Numbers Cross)</option>
             <option value="dozen">Dozen (12 Numbers Block)</option>
             <option value="column">Column (12 Numbers Line)</option>
@@ -179,6 +180,7 @@
                 <option value="straight">Straight Up</option>
                 <option value="split">Split Bet</option>
                 <option value="street">Street</option>
+                <option value="doublestreet">Street (6 Numbers Row)</option>
                 <option value="corner">Corner</option>
                 <option value="dozen">Dozen</option>
                 <option value="column">Column</option>
@@ -442,6 +444,27 @@
                 targets = [rowBase, rowBase + 1, rowBase + 2];
                 labelString = `Street [${targets[0]}-${targets[2]}]`;
                 break;
+
+                case "double_street":
+    // 1. Get the starting number of the 3-number street containing the pivot
+    let currentStreetBase = Math.floor((pivotNum - 1) / 3) * 3 + 1;
+    
+    // 2. Decide whether to pair with the street below or above
+    let companionStreetBase;
+    if (currentStreetBase + 3 <= 34) {
+        // Pair with the street right after it if within bounds
+        companionStreetBase = currentStreetBase + 3;
+    } else {
+        // Fallback: Pair with the street right before it if at the top of the board (numbers 34-36)
+        companionStreetBase = currentStreetBase - 3;
+    }
+    
+    // 3. Combine both streets into a single sorted array of 6 unique numbers
+    let lowBase = Math.min(currentStreetBase, companionStreetBase);
+    targets = [lowBase, lowBase + 1, lowBase + 2, lowBase + 3, lowBase + 4, lowBase + 5];
+    
+    labelString = `Double Street [${targets[0]}-${targets[5]}]`;
+    break;
 
             case "corner":
                 if (pivotNum > 33) pivotNum = 33;
