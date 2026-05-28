@@ -266,6 +266,16 @@
     let rollingHistoryPool = [];
     let wheelFrequencyData = Array(37).fill(0);
 
+    // Track unit progressions independently for dozens and columns
+    let groupUnits = {
+        "1st Dozen": 1,
+        "2nd Dozen": 1,
+        "3rd Dozen": 1,
+        "Column 1": 1,
+        "Column 2": 1,
+        "Column 3": 1
+    };
+
     // Standard Clockwise European Layout Vector Sequence
     const WHEEL_SEQUENCE = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
 
@@ -310,11 +320,9 @@
     function handleBetTypeChange() {
         selectedBetType = document.getElementById('runtimeBetType').value;
         logMessage(`Bet type dynamic shift altered to: ${selectedBetType.toUpperCase()}`);
-        // Seamlessly recalculate the baseline tracking structure for the new configuration
         const lastKnownNumber = rollingHistoryPool[rollingHistoryPool.length - 1] || 0;
         const currentPivot = getKinematicProjectionPivot(lastKnownNumber);
         
-        // Retain current progression accumulation counts but rewrite targets into the modified layout structure
         let rebuiltBets = [];
         let temporaryPivot = currentPivot;
         for (let i = 0; i < progressionIndex; i++) {
@@ -331,29 +339,20 @@
         renderOutputDisplay();
     }
 
-    /**
-     * DYNAMIC VECTOR FLUID MOTOR CONCEPTS
-     * Calculates decay models based on 154-165 RPM thresholds, acoustic wave interference, 
-     * structural pattern frequency, and mirror-planes.
-     */
     function getKinematicProjectionPivot(lastNumber) {
         let currentWheelIndex = WHEEL_SEQUENCE.indexOf(lastNumber);
         if (currentWheelIndex === -1) currentWheelIndex = 0;
 
-        // 1. Friction loss displacement calculation (Bounds calibrated to 154-165 RPM speeds)
         const mockRPM = 154 + (Math.sin(rollingHistoryPool.length) * 5.5 + 5.5); 
         const velocityLossFactor = Math.sin(mockRPM * Math.PI / 180) * 14.2; 
-        
-        // 2. Air displacement vibration density offsets
         const acousticNoiseOffset = Math.round(Math.cos(lastNumber || 1) * 4);
 
-        // 3. Symmetrical Reflection balancing checks
         const diametricSymmetryIndex = (currentWheelIndex + 18) % 37;
         const symmetryWeight = wheelFrequencyData[WHEEL_SEQUENCE[diametricSymmetryIndex]] || 0;
 
         let finalDisplacement = Math.round(velocityLossFactor + acousticNoiseOffset);
         if (symmetryWeight > (wheelFrequencyData[lastNumber] || 0)) {
-            finalDisplacement += 18; // Velocity path jumps across symmetry vector lines
+            finalDisplacement += 18; 
         }
 
         let targetIndex = (currentWheelIndex + finalDisplacement) % 37;
@@ -363,55 +362,76 @@
     }
 
     function registerInputSpin(landedNum) {
-        // Automatically capture historical entries seamlessly
         rollingHistoryPool.push(landedNum);
         recalculateFrequencyData();
         document.getElementById('statLast').innerText = landedNum;
 
         let hitDetected = false;
-        for (let betInstance of activeBets) {
-            if (betInstance.numbers.includes(landedNum)) {
-                hitDetected = true;
-                break;
+        
+        // Dynamic evaluation logic processing for group bets (dozen/column)
+        if (selectedBetType === "dozen" || selectedBetType === "column") {
+            for (let betInstance of activeBets) {
+                let groupKey = betInstance.groupKey;
+                if (betInstance.numbers.includes(landedNum)) {
+                    hitDetected = true;
+                    groupUnits[groupKey] = Math.max(1, groupUnits[groupKey] - 1);
+                    logMessage(`WIN RECORDED: ${groupKey} hit. Unit reduced to ${groupUnits[groupKey]}u.`);
+                } else {
+                    groupUnits[groupKey] = groupUnits[groupKey] + 1;
+                    logMessage(`LOSS RECORDED: ${groupKey} missed. Unit increased to ${groupUnits[groupKey]}u.`);
+                }
             }
-        }
-
-        if (hitDetected) {
-            logMessage(`WIN RECORDED: Number ${landedNum} landed inside predicted matrix zones.`);
-            // Continuous loop execution: Reset progression step immediately without flashing alerts
+            
+            // Generate next state step matrix
             generateFreshCycleBaseline();
             renderOutputDisplay();
             
-            // Temporary highlight signaling success layout state change
-            const box = document.getElementById('predictionDisplay');
-            box.style.color = "#d4af37";
-            setTimeout(() => { box.style.color = "#2ecc71"; }, 1000);
+            if (hitDetected) {
+                const box = document.getElementById('predictionDisplay');
+                box.style.color = "#d4af37";
+                setTimeout(() => { box.style.color = "#2ecc71"; }, 1000);
+            }
         } else {
-            // Loss accumulation cycle phase
-            progressionIndex++;
-            logMessage(`Loss registered at number ${landedNum}. Advancing accumulation cascade to Step ${progressionIndex}.`);
+            // Processing logic framework for standard selections
+            for (let betInstance of activeBets) {
+                if (betInstance.numbers.includes(landedNum)) {
+                    hitDetected = true;
+                    break;
+                }
+            }
 
-            if (progressionIndex > 16) {
-                logMessage(`System threshold warning: 16-step allocation parameter reached. Automatic baseline correction implemented.`);
+            if (hitDetected) {
+                logMessage(`WIN RECORDED: Number ${landedNum} landed inside predicted matrix zones.`);
                 generateFreshCycleBaseline();
                 renderOutputDisplay();
-                return;
-            }
-
-            // Generate an adaptive offset counter-strike target based on the newest historical data node
-            let adaptivePivot = getKinematicProjectionPivot(landedNum);
-            let nextCandidate = generateGridTargetArray(adaptivePivot, selectedBetType);
-
-            // Avoid duplication collisions during layer compilation steps
-            let isDuplicate = activeBets.some(b => b.display === nextCandidate.display);
-            if (!isDuplicate) {
-                activeBets.push(nextCandidate);
+                
+                const box = document.getElementById('predictionDisplay');
+                box.style.color = "#d4af37";
+                setTimeout(() => { box.style.color = "#2ecc71"; }, 1000);
             } else {
-                let defensivePivot = WHEEL_SEQUENCE[(WHEEL_SEQUENCE.indexOf(adaptivePivot) + 7) % 37];
-                activeBets.push(generateGridTargetArray(defensivePivot, selectedBetType));
-            }
+                progressionIndex++;
+                logMessage(`Loss registered at number ${landedNum}. Advancing accumulation cascade to Step ${progressionIndex}.`);
 
-            renderOutputDisplay();
+                if (progressionIndex > 16) {
+                    logMessage(`System threshold warning: 16-step allocation parameter reached. Automatic baseline correction implemented.`);
+                    generateFreshCycleBaseline();
+                    renderOutputDisplay();
+                    return;
+                }
+
+                let adaptivePivot = getKinematicProjectionPivot(landedNum);
+                let nextCandidate = generateGridTargetArray(adaptivePivot, selectedBetType);
+
+                let isDuplicate = activeBets.some(b => b.display === nextCandidate.display);
+                if (!isDuplicate) {
+                    activeBets.push(nextCandidate);
+                } else {
+                    let defensivePivot = WHEEL_SEQUENCE[(WHEEL_SEQUENCE.indexOf(adaptivePivot) + 7) % 37];
+                    activeBets.push(generateGridTargetArray(defensivePivot, selectedBetType));
+                }
+
+                renderOutputDisplay();
+            }
         }
     }
 
@@ -421,8 +441,9 @@
     function generateGridTargetArray(pivotNum, type) {
         let targets = [];
         let labelString = "";
+        let groupKey = "";
 
-        if (pivotNum === 0) pivotNum = 2; // Safeguard zero normalization limits safely inside array rows
+        if (pivotNum === 0) pivotNum = 2;
 
         switch(type) {
             case "straight":
@@ -430,7 +451,7 @@
                 labelString = `[No. ${pivotNum}]`;
                 break;
 
-            case "split": // Horizontal links (diff of 1) or vertical links (diff of 3)
+            case "split":
                 if (pivotNum % 3 !== 0 && pivotNum < 36) {
                     targets = [pivotNum, pivotNum + 1];
                 } else {
@@ -466,9 +487,17 @@
                 break;
 
             case "dozen":
-                if (pivotNum <= 12) { targets = Array.from({length: 12}, (_, i) => i + 1); labelString = "1st Dozen"; }
-                else if (pivotNum <= 24) { targets = Array.from({length: 12}, (_, i) => i + 13); labelString = "2nd Dozen"; }
-                else { targets = Array.from({length: 12}, (_, i) => i + 25); labelString = "3rd Dozen"; }
+                if (pivotNum <= 12) { 
+                    targets = Array.from({length: 12}, (_, i) => i + 1); 
+                    groupKey = "1st Dozen"; 
+                } else if (pivotNum <= 24) { 
+                    targets = Array.from({length: 12}, (_, i) => i + 13); 
+                    groupKey = "2nd Dozen"; 
+                } else { 
+                    targets = Array.from({length: 12}, (_, i) => i + 25); 
+                    groupKey = "3rd Dozen"; 
+                }
+                labelString = `${groupKey} (${groupUnits[groupKey]}u)`;
                 break;
 
             case "column":
@@ -476,11 +505,12 @@
                 if (remainder === 0) remainder = 3;
                 targets = [];
                 for (let k = 0; k < 12; k++) targets.push((k * 3) + remainder);
-                labelString = `Column ${4 - remainder}`;
+                groupKey = `Column ${4 - remainder}`;
+                labelString = `${groupKey} (${groupUnits[groupKey]}u)`;
                 break;
         }
 
-        return { numbers: targets, display: labelString };
+        return { numbers: targets, display: labelString, groupKey: groupKey };
     }
 
     function logMessage(msg) {
@@ -490,6 +520,11 @@
     }
 
     function renderOutputDisplay() {
+        // Regenerate label display text to capture updated units dynamically
+        if (selectedBetType === "dozen" || selectedBetType === "column") {
+            activeBets = activeBets.map(b => generateGridTargetArray(b.numbers[0], selectedBetType));
+        }
+
         const fullOutputString = activeBets.map(b => b.display).join(" | ");
         document.getElementById('predictionDisplay').innerText = fullOutputString;
         
